@@ -1,0 +1,36 @@
+{
+  "easyGoVersion": "1.0",
+  "client": "com.haleydu.cimoc",
+  "logicEntities": [
+    {
+      "head": {
+        "function": "magicwindow",
+        "required": "true"
+      },
+      "body": {
+        "mode": "1",
+        "activityPairs": [
+          {
+            "from": "com.haleydu.cimoc.ui.activity.MainActivity",
+            "to": "*"
+          },
+          {
+            "from": "com.haleydu.cimoc.ui.activity.ResultActivity",
+            "to": "com.haleydu.cimoc.ui.activity.DetailActivity"
+          }
+        ],
+        "Activities": [
+          {
+            "name": "com.haleydu.cimoc.ui.activity.PageReaderActivity",
+            "defaultFullScreen": "true"
+          }
+        ],
+        "UX": {
+          "supportRotationUxCompat": "true",
+          "isDraggable": "false",
+          "supportDraggingToFullScreen": "PAD|FOLD"
+        }
+      }
+    }
+  ]
+}

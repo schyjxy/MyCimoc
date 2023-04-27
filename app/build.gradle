@@ -1,0 +1,122 @@
+apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
+apply plugin: 'org.greenrobot.greendao'
+apply plugin: 'com.google.gms.google-services'  // Google Services plugin
+apply plugin: 'com.google.firebase.crashlytics'
+apply plugin: 'com.huawei.agconnect'
+
+def buildVersion = 329
+def version = "v1.5.2"
+
+def cmdGetTagname = 'git describe --tags'
+def cmdGetCommitNums = 'git rev-list HEAD --count'
+if(System.getenv("TRAVIS_BUILD_NUMBER") != null){
+    buildVersion = System.getenv("TRAVIS_BUILD_NUMBER").trim().toInteger()
+    version = cmdGetTagname.execute().text.trim()
+}
+else {
+    buildVersion = cmdGetCommitNums.execute().text.trim().toInteger()
+    cmdGetTagname = 'git describe --abbrev=0'
+
+    version = cmdGetTagname.execute().text.trim()
+}
+
+android {
+    compileSdkVersion 30
+    buildToolsVersion '30.0.3'
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    defaultConfig {
+        applicationId "com.haleydu.cimoc"
+        minSdkVersion 16
+        targetSdkVersion 30
+        versionCode buildVersion
+        versionName version
+        resConfigs "en", "zh"
+        multiDexEnabled true
+
+    }
+    signingConfigs {
+        release {
+            storeFile file("../hellovr10.jks")
+            storePassword '123456'
+            keyAlias 'vr'
+            keyPassword '123456'
+        }
+        debug {
+            storeFile file("../hellovr10.jks")
+            storePassword '123456'
+            keyAlias 'vr'
+            keyPassword '123456'
+        }
+    }
+    buildTypes {
+        release {
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            shrinkResources true
+            zipAlignEnabled true
+            signingConfig signingConfigs.release
+        }
+        debug {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            shrinkResources false
+            zipAlignEnabled false
+            signingConfig signingConfigs.debug
+        }
+
+        android.applicationVariants.all { variant ->
+            variant.outputs.all {
+                outputFileName = "Cimoc_"+version+".apk"
+            }
+        }
+    }
+    dexOptions {
+        additionalParameters = ["--minimal-main-dex"]
+    }
+}
+
+greendao {
+    schemaVersion 12
+}
+
+dependencies {
+    implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    implementation 'androidx.legacy:legacy-support-v13:1.0.0'
+    implementation 'androidx.appcompat:appcompat:1.3.0'
+    implementation 'androidx.recyclerview:recyclerview:1.2.1'
+    implementation 'com.google.android.material:material:1.4.0'
+    implementation 'com.jakewharton:butterknife:10.2.1'
+    annotationProcessor 'com.jakewharton:butterknife-compiler:10.1.0'
+    implementation 'org.greenrobot:greendao:3.3.0'
+    //noinspection GradleDependency : for support android low api devices,not update OKHTTP
+    implementation 'com.squareup.okhttp3:okhttp:3.12.3'
+    implementation 'com.facebook.fresco:fresco:2.3.0'
+    implementation 'org.jsoup:jsoup:1.13.1'
+    implementation 'org.adw.library:discrete-seekbar:1.0.1'
+    implementation 'io.reactivex:rxjava:1.3.8'
+    implementation 'io.reactivex:rxandroid:1.2.1'
+    api 'com.google.guava:guava:27.0.1-android'
+
+    implementation 'androidx.multidex:multidex:2.0.1'
+    implementation 'com.google.code.gson:gson:2.8.6'
+    implementation 'com.alibaba:fastjson:1.2.62'
+    implementation "androidx.core:core-ktx:1.6.0"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.5.10"
+    implementation 'com.google.firebase:firebase-analytics:19.0.0'
+    implementation 'com.google.firebase:firebase-crashlytics:18.1.0'
+    implementation 'com.google.firebase:firebase-config:21.0.0'
+    implementation 'com.king.app:app-updater:1.0.8-androidx'
+    implementation 'com.king.app:app-dialog:1.0.8-androidx'
+    implementation 'com.iqiyi.xcrash:xcrash-android-lib:3.0.0'
+
+}
+repositories {
+    mavenCentral()
+}

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/comic_search"
+        android:icon="@drawable/ic_search_white_24dp"
+        android:title="@string/comic_search"
+        app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/comic_inverseSelection"
+        android:title="@string/comic_inverse_selection"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/comic_allSelection"
+        android:title="@string/comic_all_selection"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/comic_AllDeselect"
+        android:title="@string/comic_all_deselect"
+        app:showAsAction="never" />
+</menu>
