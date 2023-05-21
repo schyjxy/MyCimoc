@@ -27,6 +27,7 @@ public class UpdateHelper {
             initSource(session);
             manager.putInt(PreferenceManager.PREF_APP_VERSION, VERSION);
         }
+        //initSource(session);
     }
 
     /**
@@ -54,47 +55,48 @@ public class UpdateHelper {
      */
     private static void initSource(DaoSession session) {
         List<Source> list = new ArrayList<>();
-        list.add(IKanman.getDefaultSource());
+        //list.add(IKanman.getDefaultSource());
         list.add(Dmzj.getDefaultSource());
-        list.add(HHAAZZ.getDefaultSource());
-        list.add(CCTuku.getDefaultSource());
-        list.add(U17.getDefaultSource());
+        //list.add(HHAAZZ.getDefaultSource());
+        //list.add(CCTuku.getDefaultSource());
+        //list.add(U17.getDefaultSource());
         list.add(DM5.getDefaultSource());
-        list.add(Webtoon.getDefaultSource());
+        //list.add(Webtoon.getDefaultSource());
         list.add(MH57.getDefaultSource());
         list.add(Dmzjv2.getDefaultSource());
-        list.add(MangaNel.getDefaultSource());
-        list.add(Mangakakalot.getDefaultSource());
-        list.add(PuFei.getDefaultSource());
+        //list.add(MangaNel.getDefaultSource());
+        //list.add(Mangakakalot.getDefaultSource());
+        //list.add(PuFei.getDefaultSource());
         list.add(Cartoonmad.getDefaultSource());
-        list.add(Animx2.getDefaultSource());
-        list.add(MH517.getDefaultSource());
-        list.add(BaiNian.getDefaultSource());
-        list.add(MiGu.getDefaultSource());
-        list.add(Tencent.getDefaultSource());
-        list.add(BuKa.getDefaultSource());
+        list.add(JiuJiuManHua.getDefaultSource());
+        //list.add(Animx2.getDefaultSource());
+        //list.add(MH517.getDefaultSource());
+        //list.add(BaiNian.getDefaultSource());
+        //list.add(MiGu.getDefaultSource());
+        //list.add(Tencent.getDefaultSource());
+        //list.add(BuKa.getDefaultSource());
         list.add(QiManWu.getDefaultSource());
-        list.add(Hhxxee.getDefaultSource());
-        list.add(ChuiXue.getDefaultSource());
+        //list.add(Hhxxee.getDefaultSource());
+        //list.add(ChuiXue.getDefaultSource());
         list.add(BaiNian.getDefaultSource());
         list.add(TuHao.getDefaultSource());
-        list.add(SixMH.getDefaultSource());
+        //list.add(SixMH.getDefaultSource());
         list.add(MangaBZ.getDefaultSource());
         list.add(ManHuaDB.getDefaultSource());
         list.add(Manhuatai.getDefaultSource());
         list.add(ManHua90.getDefaultSource());
+        list.add(ShenshiManHua.getDefaultSource());
         list.add(GuFeng.getDefaultSource());
-        list.add(CCMH.getDefaultSource());
-        list.add(Manhuatai.getDefaultSource());
-        list.add(GuFeng.getDefaultSource());
-        list.add(YYLS.getDefaultSource());
+        //list.add(CCMH.getDefaultSource());
+        //list.add(Manhuatai.getDefaultSource());
+        //list.add(YYLS.getDefaultSource());
         list.add(JMTT.getDefaultSource());
-        list.add(Ohmanhua.getDefaultSource());
+        //list.add(Ohmanhua.getDefaultSource());
         list.add(CopyMH.getDefaultSource());
         list.add(WebtoonDongManManHua.getDefaultSource());
         list.add(MH160.getDefaultSource());
-        list.add(QiMiaoMH.getDefaultSource());
-        list.add(YKMH.getDefaultSource());
+        //list.add(QiMiaoMH.getDefaultSource());
+        //list.add(YKMH.getDefaultSource());
         list.add(DmzjFix.getDefaultSource());
         session.getSourceDao().insertOrReplaceInTx(list);
     }

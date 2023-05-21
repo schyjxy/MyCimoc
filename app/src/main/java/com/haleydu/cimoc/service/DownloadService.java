@@ -230,6 +230,7 @@ public class DownloadService extends Service implements AppGetter {
             if (request != null) {
                 Response response = null;
                 try {
+                    //禁漫天堂处理
                     if (mTask.getSource() == 72){
                         OkHttpClient mJMTTHttpClient = new OkHttpClient().newBuilder()
                                 .followRedirects(true)

@@ -40,7 +40,7 @@ public class GuFeng extends MangaParser {
     public Request getSearchRequest(String keyword, int page) throws UnsupportedEncodingException {
         String url = "";
         if (page == 1) {
-            url = StringUtils.format("https://m.gufengmh8.com/search/?keywords=%s",
+            url = StringUtils.format("https://m.gufengmh.com/search/?keywords=%s",
                     URLEncoder.encode(keyword, "UTF-8"));
         }
         return new Request.Builder()
@@ -73,7 +73,7 @@ public class GuFeng extends MangaParser {
 
     @Override
     public Request getInfoRequest(String cid) {
-        String url = "https://m.gufengmh8.com/manhua/".concat(cid) + "/";
+        String url = "https://m.gufengmh.com/manhua/".concat(cid) + "/";
         return new Request.Builder().url(url).build();
     }
 
@@ -107,7 +107,7 @@ public class GuFeng extends MangaParser {
 
     @Override
     public Request getImagesRequest(String cid, String path) {
-        String url = StringUtils.format("https://m.gufengmh8.com/manhua/%s/%s.html", cid, path);
+        String url = StringUtils.format("https://m.gufengmh.com/manhua/%s/%s.html", cid, path);
         return new Request.Builder().url(url).build();
     }
 

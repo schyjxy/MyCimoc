@@ -1,5 +1,7 @@
 package com.haleydu.cimoc.core;
 
+import android.util.Log;
+
 import com.haleydu.cimoc.App;
 import com.haleydu.cimoc.manager.ChapterManager;
 import com.haleydu.cimoc.manager.SourceManager;
@@ -52,14 +54,22 @@ public class Manga {
                     }
                     while (iterator.hasNext()) {
                         Comic comic = iterator.next();
-//                        if (comic != null && (comic.getTitle().indexOf(keyword) != -1 || comic.getAuthor().indexOf(keyword) != -1)) {
-                        if (comic != null
-                                && (indexOfIgnoreCase(comic.getTitle(), keyword)
-                                || indexOfIgnoreCase(comic.getAuthor(), keyword)
-                                || (!strictSearch))) {
+
+                        if(comic == null)
+                            continue;
+
+                        if(strictSearch) {
+
+                            if(indexOfIgnoreCase(comic.getTitle(), keyword) || (comic.getAuthor() != null && indexOfIgnoreCase(comic.getAuthor(), keyword))) {
+                                subscriber.onNext(comic);
+                                Thread.sleep(random.nextInt(200));
+                            }
+                        }
+                        else{
                             subscriber.onNext(comic);
                             Thread.sleep(random.nextInt(200));
                         }
+
                     }
                     subscriber.onCompleted();
                 } catch (Exception e) {
@@ -146,7 +156,7 @@ public class Manga {
                     if (list.isEmpty()) {
                         Request request = parser.getImagesRequest(cid, path);
                         html = getResponseBody(App.getHttpClient(), request);
-                        list = parser.parseImages(html,chapter);
+                        list = parser.parseImages(html,chapter);//这里调用parser
                         if (list == null || list.size()==0) {
                             list = parser.parseImages(html);
                         }

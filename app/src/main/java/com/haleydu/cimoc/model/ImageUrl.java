@@ -1,5 +1,7 @@
 package com.haleydu.cimoc.model;
 
+import android.util.Log;
+
 import org.greenrobot.greendao.annotation.Convert;
 import org.greenrobot.greendao.annotation.Entity;
 import org.greenrobot.greendao.annotation.Id;

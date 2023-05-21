@@ -21,6 +21,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.nio.charset.StandardCharsets;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -31,10 +32,16 @@ import taobe.tec.jcc.JChineseConvertor;
 
 import static com.haleydu.cimoc.core.Manga.getResponseBody;
 
+import javax.crypto.Cipher;
+import javax.crypto.spec.IvParameterSpec;
+import javax.crypto.spec.SecretKeySpec;
+
 public class CopyMH extends MangaParser {
     public static final int TYPE = 26;
     public static final String DEFAULT_TITLE = "拷贝漫画";
-    public static final String website = "https://copymanga.site/";
+    public static final String website = "https://www.copymanga.tv";
+    private final String userAgent = "PostmanRuntime/7.29.0";
+    private final String aesKey = "xxxmanga.woo.key";
 
     public static Source getDefaultSource() {
         return new Source(null, DEFAULT_TITLE, TYPE, true);
@@ -48,12 +55,10 @@ public class CopyMH extends MangaParser {
     public Request getSearchRequest(String keyword, int page) {
         String url = "";
         if (page == 1) {
-//            JChineseConvertor jChineseConvertor = JChineseConvertor.getInstance();
-//            keyword = jChineseConvertor.s2t(keyword);
-            url = StringUtils.format("https://api.copymanga.com/api/v3/search/comic?platform=1&limit=30&offset=0&q=%s", keyword);
+            url = StringUtils.format("https://www.copymanga.tv/api/kb/web/searchs/comics?offset=0&platform=2&limit=12&q=%s&q_type=%s", keyword, "");
             return new Request.Builder()
                 .url(url)
-                .addHeader("User-Agent", "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.87 Safari/537.36")
+                .addHeader("User-Agent", userAgent)
                 .build();
         }
         return null;
@@ -97,96 +102,95 @@ public class CopyMH extends MangaParser {
 
     @Override
     public Request getInfoRequest(String cid) {
-        String url = "https://api.copymanga.com/api/v3/comic2/".concat(cid);
+        String url = String.format("%s/comic/%s", website, cid);
         return new Request.Builder()
             .url(url)
-            .addHeader("User-Agent", "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.87 Safari/537.36")
+            .addHeader("User-Agent", userAgent)
             .build();
     }
 
     @Override
     public Comic parseInfo(String html, Comic comic) {
-        JSONObject body = null;
         try {
-            JSONObject comicInfo = new JSONObject(html).getJSONObject("results");
-            body = comicInfo.getJSONObject("comic");
-            String cover = body.getString("cover");
-            String intro = body.getString("brief");
-            String title = body.getString("name");
-            String update = body.getString("datetime_updated");
-            String author = ((JSONObject) body.getJSONArray("author").get(0)).getString("name");
-            // 连载状态
-            boolean finish = body.getJSONObject("status").getInt("value") != 0;
-            JSONObject group = comicInfo.getJSONObject("groups");
-            comic.note = group;
+            Node body = new Node(html);
+            String title = body.text(".col-9.comicParticulars-title-right > ul >li > h6");
+            String cover = body.getChild(".comicParticulars-left-img.loadingIcon > img").attr("data-src");
+            String author = body.text("span.comicParticulars-right-txt >a");
+            String intro = body.text(".intro");
+            boolean status = isFinish(body.text("body > main > div.container.comicParticulars-title > div > div.col-9.comicParticulars-title-right > ul > li:nth-child(6) > span.comicParticulars-right-txt"));
 
-
-            comic.setInfo(title, cover, update, intro, author, finish);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-
-        return comic;
-    }
-
-    @Override
-    public Request getChapterRequest(String html, String cid) {
-        String url = String.format("https://api.copymanga.com/api/v3/comic/%s/group/default/chapters?limit=500&offset=0", cid);
-        return new Request.Builder()
-            .url(url)
-            .addHeader("User-Agent", "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.87 Safari/537.36")
-            .build();
-    }
-
-    @Override
-    public List<Chapter> parseChapter(String html, Comic comic, Long sourceComic) throws JSONException {
-        List<Chapter> list = new LinkedList<>();
-        JSONObject jsonObject = new JSONObject(html);
-        JSONArray array = jsonObject.getJSONObject("results").getJSONArray("list");
-        for (int i = 0; i < array.length(); ++i) {
-            String title = array.getJSONObject(i).getString("name");
-            String path = array.getJSONObject(i).getString("uuid");
-            list.add(new Chapter(Long.parseLong(sourceComic + "000" + i), sourceComic, title, path, "默认"));
-        }
-        try {
-            JSONObject groups = (JSONObject) comic.note;
-            Iterator<String> keys = groups.keys();
-            while (keys.hasNext()) {
-                String key = keys.next();
-                if (key.equals("default")) continue;
-                String path_word = groups.getJSONObject(key).getString("path_word");
-                String PathName = groups.getJSONObject(key).getString("name");
-                String url = String.format("https://api.copymanga.com/api/v3/comic/%s/group/%s/chapters?limit=500&offset=0", comic.getCid(), path_word);
-                Request request = new Request.Builder()
-                    .url(url)
-                    .addHeader("User-Agent", "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.87 Safari/537.36")
-                    .build();
-                html = getResponseBody(App.getHttpClient(), request);
-                jsonObject = new JSONObject(html);
-                array = jsonObject.getJSONObject("results").getJSONArray("list");
-                for (int i = 0; i < array.length(); ++i) {
-                    String title = array.getJSONObject(i).getString("name");
-                    String path = array.getJSONObject(i).getString("uuid");
-                    list.add(new Chapter(Long.parseLong(sourceComic + "000" + i), sourceComic, title, path, PathName));
-                }
-
+            String update = body.text(".col-9.comicParticulars-title-right > ul > li:nth-child(5) > span:nth-child(2)");
+            if (update == null || update.equals("")) {
+                update = "没找到最后更新日期";
             }
+            comic.setInfo(title, cover, update, intro, author, status);
+            return comic;
 
         } catch (Exception e) {
             e.printStackTrace();
         }
 
+        return null;
+    }
+
+    @Override
+    public Request getChapterRequest(String html, String cid) {
+        String url = String.format("%s/comicdetail/%s/chapters", website, cid);
+        return new Request.Builder()
+            .url(url)
+            .addHeader("User-Agent", userAgent)
+            .build();
+    }
+
+    private  String aesDecrypt(String value, String key, String ivs) throws Exception {
+        SecretKeySpec secretKey = new SecretKeySpec(key.getBytes("UTF-8"), "AES");
+        IvParameterSpec iv = new IvParameterSpec(ivs.getBytes("UTF-8"));
+        Cipher cipher = Cipher.getInstance("AES/CBC/PKCS7Padding");
+        int size = cipher.getBlockSize();
+        cipher.init(Cipher.DECRYPT_MODE, secretKey, iv);
+
+        byte[] hexArry = Hex.decodeHex(value);
+        byte[] temp = Base64.encode(hexArry, 0);
+        byte[] code = Base64.decode(temp, Base64.DEFAULT);
+
+        return new String(cipher.doFinal(code));
+    }
+
+    @Override
+    public List<Chapter> parseChapter(String html, Comic comic, Long sourceComic) throws JSONException {
+        List<Chapter> list = new LinkedList<>();
+
+        try {
+            JSONObject jsonObject = new JSONObject(html);
+            String results = jsonObject.getString("results");
+            String iv = results.substring(0, 0x10);
+            String aesData = results.substring(0x10);
+            byte[] hexCode = Hex.decodeHex(aesData);
+            String encode = Base64.encodeToString(hexCode, 0, hexCode.length, Base64.NO_WRAP);
+            String plain = DecryptionUtils.aesDecrypt(encode, aesKey, iv);
+
+            JSONObject chapterObj = new JSONObject(plain);
+            JSONArray array = chapterObj.getJSONObject("groups").getJSONObject("default").getJSONArray("chapters");
+
+            for (int i = 0; i < array.length(); ++i) {
+                String title = array.getJSONObject(i).getString("name");
+                String path = array.getJSONObject(i).getString("id");
+                list.add(new Chapter(Long.parseLong(sourceComic + "000" + i), sourceComic, title, path, "默认"));
+            }
+
+        }catch (Exception exception) {
+            exception.printStackTrace();
+        }
 
         return Lists.reverse(list);
     }
 
     @Override
     public Request getImagesRequest(String cid, String path) {
-        String url = StringUtils.format("https://copymanga.com/comic/%s/chapter/%s", cid, path);
+        String url = StringUtils.format("%s/comic/%s/chapter/%s", website,cid, path);
         return new Request.Builder()
             .url(url)
-            .addHeader("User-Agent", "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.87 Safari/537.36")
+            .addHeader("User-Agent", userAgent)
             .build();
     }
 
@@ -194,8 +198,8 @@ public class CopyMH extends MangaParser {
     public List<ImageUrl> parseImages(String html, Chapter chapter) {
         List<ImageUrl> list = new LinkedList<>();
         Node body = new Node(html);
-        String data = body.attr("div.disposableData", "disposable");
-        String key = body.attr("div.disposablePass", "disposable").trim();
+        String data = body.attr("div.imageData", "contentkey");
+        String key = aesKey;
         String iv = data.substring(0, 0x10).trim();
         String result = data.substring(0x10).trim();
         byte[] hexCode = Hex.decodeHex(result);

@@ -73,7 +73,7 @@ public class GridAdapter extends BaseAdapter<Object> {
                             if (FrescoUtils.isCached(comic.getCover())) {
                                 request = ImageRequestBuilder
                                         .newBuilderWithSource(Uri.fromFile(FrescoUtils.getFileFromDiskCache(comic.getCover())))
-                                        .setResizeOptions(new ResizeOptions(App.mCoverWidthPixels / 3, App.mCoverHeightPixels / 3))
+                                        //.setResizeOptions(new ResizeOptions(App.mCoverWidthPixels / 3, App.mCoverHeightPixels / 3))
                                         .build();
                             }
                         } else if (!App.getManager_wifi().isWifiEnabled() && App.getPreferenceManager().getBoolean(PreferenceManager.PREF_OTHER_LOADCOVER_ONLY_WIFI, false)) {
@@ -81,19 +81,19 @@ public class GridAdapter extends BaseAdapter<Object> {
                             if (FrescoUtils.isCached(comic.getCover())) {
                                 request = ImageRequestBuilder
                                         .newBuilderWithSource(Uri.fromFile(FrescoUtils.getFileFromDiskCache(comic.getCover())))
-                                        .setResizeOptions(new ResizeOptions(App.mCoverWidthPixels / 3, App.mCoverHeightPixels / 3))
+                                        //.setResizeOptions(new ResizeOptions(App.mCoverWidthPixels / 3, App.mCoverHeightPixels / 3))
                                         .build();
                             }
                         } else {
                             if (FrescoUtils.isCached(comic.getCover())) {
                                 request = ImageRequestBuilder
                                         .newBuilderWithSource(Uri.fromFile(FrescoUtils.getFileFromDiskCache(comic.getCover())))
-                                        .setResizeOptions(new ResizeOptions(App.mCoverWidthPixels / 3, App.mCoverHeightPixels / 3))
+                                        //.setResizeOptions(new ResizeOptions(App.mCoverWidthPixels / 3, App.mCoverHeightPixels / 3))
                                         .build();
                             } else {
                                 request = ImageRequestBuilder
                                         .newBuilderWithSource(Uri.parse(comic.getCover()))
-                                        .setResizeOptions(new ResizeOptions(App.mCoverWidthPixels / 3, App.mCoverHeightPixels / 3))
+                                        //.setResizeOptions(new ResizeOptions(App.mCoverWidthPixels / 3, App.mCoverHeightPixels / 3))
                                         .build();
                             }
                         }

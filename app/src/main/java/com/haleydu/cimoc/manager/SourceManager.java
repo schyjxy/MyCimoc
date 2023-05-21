@@ -81,19 +81,10 @@ public class SourceManager {
         if (parser == null) {
             Source source = load(type);
             switch (type) {
-                case IKanman.TYPE:
-                    parser = new IKanman(source);
-                    break;
                 case Dmzj.TYPE:
                     parser = new Dmzj(source);
                     break;
-                case HHAAZZ.TYPE:
-                    parser = new HHAAZZ(source);
-                    break;
 
-                case U17.TYPE:
-                    parser = new U17(source);
-                    break;
                 case DM5.TYPE:
                     parser = new DM5(source);
                     break;
@@ -111,87 +102,71 @@ public class SourceManager {
                 case Locality.TYPE:
                     parser = new Locality();
                     break;
-                case MangaNel.TYPE:
-                    parser = new MangaNel(source);
-                    break;
 
-                //feilong
-                case PuFei.TYPE:
-                    parser = new PuFei(source);
-                    break;
-                case Tencent.TYPE:
-                    parser = new Tencent(source);
-                    break;
-                case BuKa.TYPE:
-                    parser = new BuKa(source);
-                    break;
                 case EHentai.TYPE:
                     parser = new EHentai(source);
                     break;
+
                 case QiManWu.TYPE:
                     parser = new QiManWu(source);
                     break;
-                case Hhxxee.TYPE:
-                    parser = new Hhxxee(source);
-                    break;
+
                 case Cartoonmad.TYPE:
                     parser = new Cartoonmad(source);
                     break;
-                case Animx2.TYPE:
-                    parser = new Animx2(source);
-                    break;
+
                 case MH517.TYPE:
                     parser = new MH517(source);
                     break;
-                case MiGu.TYPE:
-                    parser = new MiGu(source);
-                    break;
+
                 case BaiNian.TYPE:
                     parser = new BaiNian(source);
                     break;
-                case ChuiXue.TYPE:
-                    parser = new ChuiXue(source);
-                    break;
+
                 case TuHao.TYPE:
                     parser = new TuHao(source);
                     break;
-                case SixMH.TYPE:
-                    parser = new SixMH(source);
-                    break;
+
                 case ManHuaDB.TYPE:
                     parser = new ManHuaDB(source);
                     break;
+
                 case Manhuatai.TYPE:
                     parser = new Manhuatai(source);
                     break;
+
                 case ManHua90.TYPE:
-                    parser = new ManHua90();
+                    parser = new ManHua90(source);
                     break;
+
+                case  JiuJiuManHua.TYPE:
+                    parser = new JiuJiuManHua(source);
+                    break;
+
+                case  ShenshiManHua.TYPE:
+                    parser = new ShenshiManHua(source);
+                    break;
+
                 case GuFeng.TYPE:
                     parser = new GuFeng(source);
                     break;
-                case CCMH.TYPE:
-                    parser = new CCMH(source);
-                    break;
-                case YYLS.TYPE:
-                    parser = new YYLS(source);
-                    break;
+
                 case JMTT.TYPE:
                     parser = new JMTT(source);
                     break;
 
-                case Ohmanhua.TYPE:
-                    parser = new Ohmanhua(source);
-                    break;
                 case CopyMH.TYPE:
                     parser = new CopyMH(source);
                     break;
+
                 case MangaBZ.TYPE:
                     parser = new MangaBZ(source);
                     break;
+
                 case WebtoonDongManManHua.TYPE:
                     parser = new WebtoonDongManManHua(source);
                     break;
+
                 case MH160.TYPE:
                     parser = new MH160(source);
                     break;

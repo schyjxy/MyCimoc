@@ -181,22 +181,7 @@ public class Manhuatai extends MangaParser {
 
         return list;
     }
-//
-//
-//    class MhInfo {
-//        @SerializedName("startimg")
-//        int startimg;
-//        @SerializedName("totalimg")
-//        int totalimg;
-//        @SerializedName("pageid")
-//        int pageid;
-//        @SerializedName("comic_size")
-//        String comic_size;
-//        @SerializedName("domain")
-//        String domain;
-//        @SerializedName("imgpath")
-//        String imgpath;
-//    }
+
 
     @Override
     public Request getCheckRequest(String cid) {

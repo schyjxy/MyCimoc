@@ -214,7 +214,7 @@ public class ReaderPresenter extends BasePresenter<ReaderView> {
                         Chapter chapter;
                         switch (status) {
                             case LOAD_INIT:
-                                chapter = mReaderChapterManger.moveNext();
+                                chapter = mReaderChapterManger.movCur();
                                 chapter.setCount(list.size());
                                 if (!chapter.getTitle().equals(mComic.getTitle())) {
                                     mComic.setChapter(chapter.getTitle());
@@ -294,38 +294,52 @@ public class ReaderPresenter extends BasePresenter<ReaderView> {
         ReaderChapterManger(Chapter[] array, int index) {
             this.array = array;
             this.index = index;
-            prev = index + 1;
-            next = index;
+            prev = index - 1;
+            next = index + 1;
         }
 
         Chapter getPrevChapter() {
-            return prev < array.length ? array[prev] : null;
+            return prev >= 0? array[prev] : null;
         }
 
         Chapter getNextChapter() {
-            return next >= 0 ? array[next] : null;
-        }
+            if(next >= array.length - 1)
+                return null;
 
+            return array[next];
+        }
+        ////真正切换上一章
         Chapter prevChapter() {
-            if (index + 1 < prev) {
-                return array[++index];
+            int id = prev;
+            if(index - 1 > 0) {
+                index--;
+                prev = index - 1;
+                next = index + 1;
             }
-            return null;
-        }
 
+            return array[id];
+        }
+        //真正切换下一章
         Chapter nextChapter() {
-            if (index - 1 > next) {
-                return array[--index];
+            int id = next;
+            if(next + 1 < array.length) {
+                index++;
+                prev = index - 1;
+                next = index + 1;
             }
-            return null;
+            return array[id];
         }
 
         Chapter movePrev() {
-            return array[prev++];
+            return array[prev];
+        }
+
+        Chapter movCur(){
+            return array[index];
         }
 
         Chapter moveNext() {
-            return array[next--];
+            return array[next];
         }
 
     }
