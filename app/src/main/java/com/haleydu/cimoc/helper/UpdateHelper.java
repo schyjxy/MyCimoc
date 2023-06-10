@@ -18,7 +18,7 @@ import java.util.List;
 
 public class UpdateHelper {
 
-    // 1.04.08.008
+    // 1.05
     private static final int VERSION = BuildConfig.VERSION_CODE;
 
     public static void update(PreferenceManager manager, final DaoSession session) {

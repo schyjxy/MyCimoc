@@ -29,6 +29,7 @@ import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import okhttp3.Headers;
 import okhttp3.Request;
 
 //绅士漫画实现
@@ -37,7 +38,7 @@ public class ShenshiManHua extends MangaParser {
 
     public static final int TYPE = 149;
     public static final String DEFAULT_TITLE = "绅士漫画";
-    private  final  String host = "https://www.htmanga3.top";
+    private  final  String host = "https://www.htmanga4.top";
 
     public ShenshiManHua(Source source) {
         init(source, new Category());
@@ -51,7 +52,7 @@ public class ShenshiManHua extends MangaParser {
     public Request getSearchRequest(String keyword, int page) throws UnsupportedEncodingException, Exception {
         String url = "";
         if (page == 1) {
-            url = StringUtils.format("https://www.htmanga3.top/search/?q=%s&f=_all&s=create_time_DESC&syn=yes", keyword);
+            url = StringUtils.format("%s/search/?q=%s&f=_all&s=create_time_DESC&syn=yes", host, keyword);
         }
 
         return new Request.Builder().url(url).build();
@@ -160,6 +161,10 @@ public class ShenshiManHua extends MangaParser {
         return list;
     }
 
+    @Override
+    public Headers getHeader() {
+        return Headers.of("Referer", host);
+    }
 
     private static class Category extends MangaCategory {
 

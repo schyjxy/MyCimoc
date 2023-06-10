@@ -346,7 +346,7 @@ public class MainActivity extends BaseActivity implements MainView, NavigationVi
             finish();
         }
     }
-
+    //设置左侧菜单项
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         int itemId = item.getItemId();

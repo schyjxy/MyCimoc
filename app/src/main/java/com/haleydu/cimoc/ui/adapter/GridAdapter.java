@@ -61,6 +61,7 @@ public class GridAdapter extends BaseAdapter<Object> {
                 GridHolder gridHolder = (GridHolder) holder;
                 gridHolder.comicTitle.setText(comic.getTitle());
                 gridHolder.comicSource.setText(mTitleGetter.getTitle(comic.getSource()));
+
                 if (mProvider != null) {
                     //            ImageRequest request = ImageRequestBuilder
                     //                    .newBuilderWithSource(Uri.parse(comic.getCover()))
@@ -100,6 +101,7 @@ public class GridAdapter extends BaseAdapter<Object> {
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
+
                     DraweeController controller = mProvider.get(comic.getSource())
                             .setOldController(gridHolder.comicImage.getController())
                             .setImageRequest(request)
@@ -131,6 +133,7 @@ public class GridAdapter extends BaseAdapter<Object> {
                 int offset = parent.getWidth() / 90;
                 outRect.set(offset, 0, offset, (int) (2.8 * offset));
             }
+
         };
     }
 

@@ -69,7 +69,7 @@ public abstract class GridFragment extends RecyclerViewFragment implements GridV
 
     @Override
     protected RecyclerView.LayoutManager initLayoutManager() {
-        GridLayoutManager manager = new GridLayoutManager(getActivity(), 3);
+        GridLayoutManager manager = new GridLayoutManager(getActivity(), 6);//这里设置列数
         manager.setRecycleChildrenOnDetach(true);
         return manager;
     }

@@ -65,6 +65,7 @@ class RawDocumentFile extends DocumentFile {
                     return null;
                 }
             } catch (IOException e) {
+                e.printStackTrace();
                 return null;
             }
         }

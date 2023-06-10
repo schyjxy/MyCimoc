@@ -15,14 +15,14 @@ import kotlin.math.floor
 
 class JMTTUtil {
 
-     public fun decodeImage(img: InputStream): ByteArray {
+     public fun decodeImage(img: InputStream, rows: Int): ByteArray {
         // 使用bitmap进行图片处理
         val input = BitmapFactory.decodeStream(img)
         // 漫画高度 and width
         val height = input.height
         val width = input.width
         // 水平分割10个小图
-        val rows = 10
+        //val rows = 10
         // 未除尽像素
         val remainder = (height % rows)
         // 创建新的图片对象

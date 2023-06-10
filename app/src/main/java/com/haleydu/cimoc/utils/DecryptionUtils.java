@@ -10,8 +10,10 @@ import org.mozilla.javascript.Scriptable;
 
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Array;
+import java.math.BigInteger;
 import java.net.URLDecoder;
 import java.security.Key;
+import java.security.MessageDigest;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -59,6 +61,20 @@ public class DecryptionUtils {
     public static String base64Decrypt(String cipherString) throws UnsupportedEncodingException {
         byte[] cipherBytes = Base64.decode(cipherString, Base64.DEFAULT);
         return new String(cipherBytes, "UTF-8");
+    }
+
+    public static  String md5(String plaintext) {
+        try {
+            java.security.MessageDigest md = java.security.MessageDigest.getInstance("MD5");
+            byte[] array = md.digest(plaintext.getBytes());
+            StringBuffer sb = new StringBuffer();
+            for (int i = 0; i < array.length; ++i) {
+                sb.append(Integer.toHexString((array[i] & 0xFF) | 0x100).substring(1,3));
+            }
+            return sb.toString();
+        } catch (java.security.NoSuchAlgorithmException e) {
+        }
+        return null;
     }
 
     /**

@@ -135,6 +135,7 @@ public class ReaderAdapter extends BaseAdapter<ImageUrl> {
             if (url==null){
                 continue;
             }
+
             ImageRequestBuilder imageRequestBuilder = ImageRequestBuilder
                     .newBuilderWithSource(Uri.parse(url))
                     .setProgressiveRenderingEnabled(true);

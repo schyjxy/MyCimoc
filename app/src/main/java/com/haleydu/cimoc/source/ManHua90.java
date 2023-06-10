@@ -29,6 +29,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import okhttp3.Headers;
 import okhttp3.Request;
 //90漫画源
 public class ManHua90 extends MangaParser {
@@ -150,6 +151,12 @@ public class ManHua90 extends MangaParser {
 
         return list;
     }
+
+    @Override
+    public Headers getHeader() {
+        return Headers.of("Referer", host);
+    }
+
 
     class SearchThread extends Thread {
         private String m_url;

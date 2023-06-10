@@ -4,6 +4,7 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Rect;
 import android.graphics.RectF;
+import android.util.Base64;
 import android.util.Log;
 
 import com.facebook.cache.common.CacheKey;
@@ -14,8 +15,10 @@ import com.facebook.imagepipeline.request.BasePostprocessor;
 import com.haleydu.cimoc.model.ImageUrl;
 import com.haleydu.cimoc.rx.RxBus;
 import com.haleydu.cimoc.rx.RxEvent;
+import com.haleydu.cimoc.utils.DecryptionUtils;
 import com.haleydu.cimoc.utils.StringUtils;
 
+import java.io.UnsupportedEncodingException;
 import java.util.Objects;
 
 /**
@@ -262,22 +265,98 @@ public class MangaPostprocessor extends BasePostprocessor {
         return gray > 21500;
     }
 
+    public static String  getBase64String(String text)  {
+        try {
+            byte []hexCode = text.getBytes("UTF-8");
+            String ret = Base64.encodeToString(hexCode, 0, hexCode.length, Base64.NO_WRAP);
+            return ret;
+        }
+        catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+        return  null;
+    }
+
+    public static int getNum(String e, String t)
+    {
+        int a = 10;
+        try
+        {
+            String n = DecryptionUtils.base64Decrypt(e) + DecryptionUtils.base64Decrypt(t);
+            int e_int = Integer.parseInt(DecryptionUtils.base64Decrypt(e));
+            String src_temp = DecryptionUtils.md5(n);
+            String temp = src_temp.substring(src_temp.length() - 1);
+            int compare1 =  Integer.parseInt(DecryptionUtils.base64Decrypt("MjY4ODUw"));
+            int compare2 = Integer.parseInt(DecryptionUtils.base64Decrypt("NDIxOTI1"));
+            int compare3 = Integer.parseInt(DecryptionUtils.base64Decrypt("NDIxOTI2"));
+            int n_int = temp.getBytes("UTF-8")[0];
+
+            if (e_int >= compare1 && e_int <= compare2)
+            {
+                n_int = n_int % 10;
+            }
+            else if(e_int >= compare3)
+            {
+                n_int = n_int % 8;
+            }
+
+            switch (n_int)
+            {
+                case 0:
+                    a = 2;
+                    break;
+                case 1:
+                    a = 4;
+                    break;
+                case 2:
+                    a = 6;
+                    break;
+                case 3:
+                    a = 8;
+                    break;
+                case 4:
+                    a = 10;
+                    break;
+                case 5:
+                    a = 12;
+                    break;
+                case 6:
+                    a = 14;
+                    break;
+                case 7:
+                    a = 16;
+                    break;
+                case 8:
+                    a = 18;
+                    break;
+                case 9:
+                    a = 20; break;
+            }
+
+        }catch (Exception ex)
+        {
+            ex.printStackTrace();
+        }
+
+        return a;
+    }
+
     public void decodeJMTTImage(Bitmap sourceBitmap, CloseableReference<Bitmap> reference){
         String url = mImage.getUrl();
         int scramble_id = 220980;
         int chapterId = 0;
-//        if (url.contains("/Cimoc/download/72/")){
-//            chapterId = Integer.parseInt(Objects.requireNonNull(StringUtils.match("/-photo-(\\d*)/", url, 1)));
-//        }
-        if((url.contains("media/photos")
-                && Integer.parseInt(url.substring(url.indexOf("photos/") + 7, url.lastIndexOf("/"))) > scramble_id)
-//                || chapterId > scramble_id
-               ) {
+        String findStr = "media/photos";
+
+        if((url.contains(findStr)
+                && Integer.parseInt(url.substring(url.indexOf("photos/") + 7, url.lastIndexOf("/"))) > scramble_id)) {
             Bitmap resultBitmap = reference.get();
-            int rows = 10;
+            String temp = url.substring(url.indexOf(findStr) + findStr.length() + 1);
+            String aid = temp.substring(0, temp.indexOf("/"));
+            String pageNum = temp.substring(temp.indexOf("/") + 1, temp.indexOf("."));
+            int rows = getNum(getBase64String(aid), getBase64String(pageNum));//结果为6;
             int remainder  = mHeight % rows;
-            //Canvas canvas = new Canvas(resultBitmap);
-            for (int x = 0; x < 10; x++) {
+
+            for (int x = 0; x < rows; x++) {
                 int chunkHeight = (int)Math.floor(mHeight / rows);
                 int py = chunkHeight * (x);
                 int y = mHeight - chunkHeight * (x + 1) - remainder;
@@ -290,6 +369,9 @@ public class MangaPostprocessor extends BasePostprocessor {
                 int[] pixels = new int[(chunkHeight) * mWidth];
                 sourceBitmap.getPixels(pixels, 0, mWidth, 0, y, mWidth, chunkHeight);
                 resultBitmap.setPixels(pixels, 0, mWidth, 0, py, mWidth, chunkHeight);
+//                Log.e("test", String.format(" 源坐标 %d,%d, 裁剪宽 %d, 高 %d, 目标坐标 %d,%d",
+//                        0,y, mWidth, chunkHeight, 0, py
+//                        ));
             }
             jmttIsDone=true;
         }

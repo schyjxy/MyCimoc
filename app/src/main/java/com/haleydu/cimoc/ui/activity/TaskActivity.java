@@ -79,7 +79,7 @@ public class TaskActivity extends CoordinatorActivity implements TaskView {
         mActionButton2.setImageResource(R.drawable.ic_play_arrow_white_24dp);
         mActionButton2.show();
     }
-
+    //点击下载按钮
     @OnClick(R.id.coordinator_action_button2)
     void onActionButton2Click() {
         for (int i = 0; i < mTaskAdapter.getDateSet().size(); i++) {

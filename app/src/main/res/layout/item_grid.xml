@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:fresco="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent"
-    android:layout_height="140dp"
+    android:layout_width="100sp"
+    android:layout_height="130sp"
     android:clickable="true"
     android:foreground="?android:attr/selectableItemBackground">
 
@@ -10,7 +10,7 @@
         android:id="@+id/item_grid_image"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        fresco:actualImageScaleType="centerCrop" />
+        fresco:actualImageScaleType="none" />
 
     <View
         android:id="@+id/item_grid_symbol"

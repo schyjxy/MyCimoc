@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
+import okhttp3.Headers;
 import okhttp3.Request;
 
 public class JiuJiuManHua extends MangaParser {
@@ -106,6 +107,11 @@ public class JiuJiuManHua extends MangaParser {
 
         String url = StringUtils.format("%s%s.html", baseUrl, path);
         return new Request.Builder().url(url).build();
+    }
+
+    @Override
+    public Headers getHeader() {
+        return Headers.of("Referer", baseUrl);
     }
 
     @Override

@@ -9,6 +9,7 @@ import android.os.IBinder;
 import androidx.annotation.Nullable;
 import androidx.collection.LongSparseArray;
 
+import android.util.Log;
 import android.util.Pair;
 
 import com.haleydu.cimoc.App;
@@ -16,6 +17,7 @@ import com.haleydu.cimoc.R;
 import com.haleydu.cimoc.component.AppGetter;
 import com.haleydu.cimoc.core.Download;
 import com.haleydu.cimoc.core.Manga;
+import com.haleydu.cimoc.fresco.processor.MangaPostprocessor;
 import com.haleydu.cimoc.global.Extra;
 import com.haleydu.cimoc.manager.ChapterManager;
 import com.haleydu.cimoc.manager.PreferenceManager;
@@ -238,11 +240,21 @@ public class DownloadService extends Service implements AppGetter {
                                 .retryOnConnectionFailure(true)
                                 .addInterceptor(chain -> {
                                     String url1 = chain.request().url().toString();
+                                    String findStr = "media/photos";
                                     Response response1 = chain.proceed(chain.request());
-                                    if (!url1.toLowerCase().contains("media/photos")) return response1;
+                                    if (!url1.toLowerCase().contains("media/photos"))
+                                        return response1;
+
                                     int cha = Integer.parseInt(url1.substring(url1.indexOf("photos/") + 7, url1.lastIndexOf("/")));
-                                    if ( cha < 220980) return response1;
-                                    byte[] res = new JMTTUtil().decodeImage(response1.body().byteStream());
+                                    if ( cha < 220980)
+                                        return response1;
+
+
+                                    String temp = url1.substring(url1.indexOf(findStr) + findStr.length() + 1);
+                                    String aid = temp.substring(0, temp.indexOf("/"));
+                                    String pageNum = temp.substring(temp.indexOf("/") + 1, temp.indexOf("."));
+                                    int row = MangaPostprocessor.getNum(MangaPostprocessor.getBase64String(aid), MangaPostprocessor.getBase64String(pageNum));
+                                    byte[] res = new JMTTUtil().decodeImage(response1.body().byteStream(), row);
                                     MediaType mediaType = MediaType.parse("image/avif,image/webp,image/apng,image/*,*/*");
                                     ResponseBody outputBytes = ResponseBody.create(mediaType, res);
                                     return response1.newBuilder().body(outputBytes).build();

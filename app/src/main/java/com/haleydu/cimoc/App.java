@@ -183,7 +183,7 @@ public class App extends MultiDexApplication implements AppGetter, Thread.Uncaug
         ((WindowManager) getSystemService(WINDOW_SERVICE)).getDefaultDisplay().getMetrics(metrics);
         mWidthPixels = metrics.widthPixels;
         mHeightPixels = metrics.heightPixels;
-        mCoverWidthPixels = mWidthPixels / 6;
+        mCoverWidthPixels = mWidthPixels / 3;
         mCoverHeightPixels = mHeightPixels * mCoverWidthPixels / mWidthPixels;
         mLargePixels = 3 * metrics.widthPixels * metrics.heightPixels;
     }
