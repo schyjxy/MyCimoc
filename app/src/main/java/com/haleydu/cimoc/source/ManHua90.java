@@ -35,7 +35,7 @@ import okhttp3.Request;
 public class ManHua90 extends MangaParser {
     public static final int TYPE = 147;
     public static final String DEFAULT_TITLE = "90漫画";
-    private final String host = "http://wap.90mh.com/";
+    private final String host = "http://m.90mh.org/";
     Map<String, String> urlMap = new HashMap<String, String>();
 
     public ManHua90(Source source) {
@@ -50,7 +50,7 @@ public class ManHua90 extends MangaParser {
     public Request getSearchRequest(String keyword, int page) throws UnsupportedEncodingException, Exception {
         String url = "";
         if (page == 1) {
-            url = StringUtils.format("http://wap.90mh.com/search/?keywords=%s", keyword);
+            url = StringUtils.format("http://m.90mh.org/search/?keywords=%s", keyword);
         }
 
         return new Request.Builder().url(url).build();

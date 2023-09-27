@@ -38,7 +38,7 @@ public class ShenshiManHua extends MangaParser {
 
     public static final int TYPE = 149;
     public static final String DEFAULT_TITLE = "绅士漫画";
-    private  final  String host = "https://www.htmanga4.top";
+    private  final  String host = "http://www.wn01.lol/";
 
     public ShenshiManHua(Source source) {
         init(source, new Category());
@@ -87,8 +87,9 @@ public class ShenshiManHua extends MangaParser {
         String title = body.getChild("#bodywrap > h2").text();
         String cover = "http:" + body.src(".asTBcell.uwthumb > img");
         String author = "佚名";
-        if(title.contains("[")){
-            author = title.substring(title.indexOf("[") + 1).substring(0, title.indexOf("]") - 1);
+        if(title.contains("[") && title.contains("]")) {
+            String temp = title.substring(title.indexOf("[") + 1);
+            author = temp.substring(0, temp.indexOf("]") - 1);
         }
 
         String intro = body.text(".asTBcell.uwconn >p");
@@ -188,7 +189,7 @@ public class ShenshiManHua extends MangaParser {
         @Override
         public List<Pair<String, String>> getSubject() {
             List<Pair<String, String>> list = new ArrayList<>();
-            list.add(Pair.create("首页", "https://www.htmanga3.top/"));
+            list.add(Pair.create("首页", "http://www.wn01.lol/"));
             return list;
         }
 

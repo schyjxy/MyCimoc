@@ -34,7 +34,7 @@ public class QiManWu extends MangaParser {
 
     public static final int TYPE = 53;
     public static final String DEFAULT_TITLE = "奇漫屋";
-    public static final String baseUrl = "http://qiman6.com";
+    public static final String baseUrl = "http://m.qiman59.com";
 
     public QiManWu(Source source) {
         init(source, null);
@@ -110,13 +110,13 @@ public class QiManWu extends MangaParser {
 
     @Override
     public Request getChapterRequest(String html, String cid) {
-        String url = "http://qiman6.com/bookchapter/";
+        String url = "http://m.qiman59.com/bookchapter/";
         String id = Objects.requireNonNull(StringUtils.match(" data: \\{ \"id\":(.*?),", html, 1)).trim();
         String id2 = Objects.requireNonNull(StringUtils.match(", \"id2\":(.*?)\\},", html, 1)).trim();
         RequestBody body = new FormBody.Builder().add("id", id).add("id2", id2).build();
         return new Request.Builder().url(url).post(body)
                 .addHeader("Referer", baseUrl)
-                .addHeader("Host", "qiman6.com")
+                .addHeader("Host", "m.qiman59.com")
                 .build();
     }
 
