@@ -27,10 +27,17 @@ public abstract class MangaParser implements Parser {
     private Category mCategory;
 
     protected void init(Source source, Category category) {
-        mTitle = source.getTitle();
-        mCategory = category;
+        if(source != null)
+        {
+            mTitle = source.getTitle();
+            mCategory = category;
+            initUrlFilterList();
+        }
+        else
+        {
+            return;//为什么会出现null
+        }
 
-        initUrlFilterList();
     }
 
     protected void initUrlFilterList() {

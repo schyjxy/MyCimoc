@@ -63,7 +63,7 @@ public class ResultPresenter extends BasePresenter<ResultView> {
         }
         return source;
     }
-
+    //加载目录信息
     public void loadCategory() {
         if (mStateArray[0].state == STATE_NULL) {
             Parser parser = mSourceManager.getParser(mStateArray[0].source);

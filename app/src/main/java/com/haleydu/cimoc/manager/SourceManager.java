@@ -81,9 +81,9 @@ public class SourceManager {
         if (parser == null) {
             Source source = load(type);
             switch (type) {
-                case Dmzj.TYPE:
-                    parser = new Dmzj(source);
-                    break;
+//                case Dmzj.TYPE:
+//                    parser = new Dmzj(source);
+//                    break;
 
                 case DM5.TYPE:
                     parser = new DM5(source);
@@ -96,9 +96,9 @@ public class SourceManager {
                     parser = new MH57(source);
                     break;
 
-                case Dmzjv2.TYPE:
-                    parser = new Dmzjv2(source);
-                    break;
+//                case Dmzjv2.TYPE:
+//                    parser = new Dmzjv2(source);
+//                    break;
                 case Locality.TYPE:
                     parser = new Locality();
                     break;

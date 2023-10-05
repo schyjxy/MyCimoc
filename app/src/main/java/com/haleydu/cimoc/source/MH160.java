@@ -33,7 +33,7 @@ public class MH160 extends MangaParser {
 
     public static final int TYPE = 28;
     public static final String DEFAULT_TITLE = "漫画160";
-    private static final String baseUrl = "https://www.mh160.xyz";
+    private static final String baseUrl = "https://www.mh160.cc";
 
     public static Source getDefaultSource() {
         return new Source(null, DEFAULT_TITLE, TYPE, true);
@@ -78,8 +78,8 @@ public class MH160 extends MangaParser {
 
     @Override
     protected void initUrlFilterList() {
-        filter.add(new UrlFilter("www.mh160.xyz", "(//(.+s)//)"));
-        filter.add(new UrlFilter("m.mh160.xyz", "/kanmanhua//(.+s)//"));
+        filter.add(new UrlFilter("www.mh160.cc", "(//(.+s)//)"));
+        filter.add(new UrlFilter("m.mh160.cc", "/kanmanhua//(.+s)//"));
 
     }
 

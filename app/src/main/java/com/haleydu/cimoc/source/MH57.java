@@ -32,6 +32,7 @@ public class MH57 extends MangaParser {
 
     public static final int TYPE = 8;
     public static final String DEFAULT_TITLE = "57漫画";
+    public static String host = "http://m.wuqimh.net/";
 
     private static final String[] servers = {
             "http://images.lancaier.com"
@@ -47,7 +48,7 @@ public class MH57 extends MangaParser {
 
     @Override
     public Request getSearchRequest(String keyword, int page) {
-        String url = StringUtils.format("http://m.wuqimh.com/search/q_%s-p-%d", keyword, page);
+        String url = StringUtils.format("%ssearch/q_%s-p-%d",host, keyword, page);
         return new Request.Builder().url(url).build();
     }
 
@@ -78,17 +79,17 @@ public class MH57 extends MangaParser {
 
     @Override
     public String getUrl(String cid) {
-        return "http://m.wuqimh.com/".concat(cid);
+        return host.concat(cid);
     }
 
     @Override
     protected void initUrlFilterList() {
-        filter.add(new UrlFilter("m.wuqimh.com"));
+        filter.add(new UrlFilter("m.wuqimh.net"));
     }
 
     @Override
     public Request getInfoRequest(String cid) {
-        String url = "http://m.wuqimh.com/".concat(cid);
+        String url = host.concat(cid);
         return new Request.Builder().url(url).build();
     }
 
@@ -120,7 +121,7 @@ public class MH57 extends MangaParser {
 
     @Override
     public Request getImagesRequest(String cid, String path) {
-        String url = StringUtils.format("http://m.wuqimh.com/%s/%s.html", cid, path);
+        String url = StringUtils.format("%s%s/%s.html", host, cid, path);
         return new Request.Builder().url(url).build();
     }
 
@@ -185,7 +186,7 @@ public class MH57 extends MangaParser {
 
     @Override
     public Headers getHeader() {
-        return Headers.of("Referer", "http://m.wuqimh.com/");
+        return Headers.of("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.149 Safari/537.36", "Host", host);
     }
 
     private static class Category extends MangaCategory {

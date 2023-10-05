@@ -29,7 +29,7 @@ public class JMTT extends MangaParser {
 
     public static final int TYPE = 72;
     public static final String DEFAULT_TITLE = "禁漫天堂";
-    public static final String baseUrl = "https://18-comic2.biz/"; //https://cm365.xyz/7MJX9t
+    public static final String baseUrl = "https://18-comic2.work/"; //https://cm365.xyz/7MJX9t
 
     public static Source getDefaultSource() {
         return new Source(null, DEFAULT_TITLE, TYPE, true);

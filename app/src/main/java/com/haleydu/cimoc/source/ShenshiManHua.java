@@ -22,6 +22,8 @@ import org.json.JSONObject;
 import java.io.UnsupportedEncodingException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -38,7 +40,7 @@ public class ShenshiManHua extends MangaParser {
 
     public static final int TYPE = 149;
     public static final String DEFAULT_TITLE = "绅士漫画";
-    private  final  String host = "http://www.wn01.lol/";
+    public static final String host = "http://www.wn01.lol/";
 
     public ShenshiManHua(Source source) {
         init(source, new Category());
@@ -138,27 +140,25 @@ public class ShenshiManHua extends MangaParser {
         return list;
     }
 
+    //解析目录结果
     public List<Comic> parseCategory(String html, int page) {
-        List<Comic> list = new LinkedList<>();
-        try {
-            JSONArray array = new JSONArray(html);
-            for (int i = 0; i != array.length(); ++i) {
-                try {
-                    JSONObject object = array.getJSONObject(i);
-                    String cid = object.getString("id");
-                    String title = object.getString("title");
-                    String cover = object.getString("cover");
-                    Long time = object.has("last_updatetime") ? object.getLong("last_updatetime") * 1000 : null;
-                    String update = time == null ? null : new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date(time));
-                    String author = object.optString("authors");
-                    list.add(new Comic(TYPE, cid, title, cover, update, author));
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
+        List<Comic> list = new ArrayList<>();
+        Node body = new Node(html);
+        for (Node node : body.list(".li.gallary_item")) {
+            String cid = node.attr("div > a", "href");
+            cid = cid.substring(cid.lastIndexOf("-") + 1);
+            cid = cid.substring(0, cid.indexOf("."));
+
+            String title = node.attr("div > a", "title");
+            String cover = String.format("http:%s", node.attr("div > a > img", "src"));
+            String author = "佚名";
+            if(title.contains("[") && title.contains("]")) {
+                String temp = title.substring(title.indexOf("[") + 1);
+                author = temp.substring(0, temp.indexOf("]") - 1);
             }
-        } catch (JSONException e) {
-            e.printStackTrace();
+            list.add(new Comic(TYPE, cid, title, cover, null, author));
         }
+        Collections.reverse(list);
         return list;
     }
 
@@ -176,20 +176,23 @@ public class ShenshiManHua extends MangaParser {
 
         @Override
         public String getFormat(String... args) {
-            String path = args[CATEGORY_SUBJECT].concat(" ").concat(args[CATEGORY_READER]).concat(" ").concat(args[CATEGORY_PROGRESS])
-                    .concat(" ").concat(args[CATEGORY_AREA]).trim();
+            String path = args[CATEGORY_SUBJECT].concat(" ").trim();
             if (path.isEmpty()) {
                 path = String.valueOf(0);
             } else {
                 path = path.replaceAll("\\s+", "-");
             }
-            return StringUtils.format("http://v2.api.dmzj.com/classify/%s/%s/%%d.json", path, args[CATEGORY_ORDER]);
+
+            String format = StringUtils.format("%s%s.html", ShenshiManHua.host, path);
+            return format;
         }
 
         @Override
         public List<Pair<String, String>> getSubject() {
             List<Pair<String, String>> list = new ArrayList<>();
-            list.add(Pair.create("首页", "http://www.wn01.lol/"));
+            list.add(Pair.create("最近更新", "albums-index-page-%d"));
+            list.add(Pair.create("单行本", "albums-index-page-%d-cate-9.html"));
+            list.add(Pair.create("同人志(汉化)", "albums-index-page-%d-cate-1.html"));
             return list;
         }
 

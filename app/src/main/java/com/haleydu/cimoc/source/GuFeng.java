@@ -27,6 +27,7 @@ public class GuFeng extends MangaParser {
 
     public static final int TYPE = 25;
     public static final String DEFAULT_TITLE = "古风漫画";
+    public static final String Host = "https://m.gufengmh.com/";
 
     public static Source getDefaultSource() {
         return new Source(null, DEFAULT_TITLE, TYPE, true);
@@ -58,10 +59,17 @@ public class GuFeng extends MangaParser {
             protected Comic parse(Node node) {
 
                 String cover = node.attr("div.itemImg > a > mip-img", "src");
-
                 String title = node.text("div.itemTxt > a");
-                String cid = node.attr("div.itemTxt > a", "href").replace("https://m.gufengmh8.com/manhua/", "");
-                cid = cid.substring(0, cid.length() - 1);
+                String cid = node.attr("div.itemTxt > a", "href");
+                String temp[] = cid.split("/", 100);
+                for(int i = temp.length - 1;i > 0;i--)
+                {
+                    if(temp[i].length() > 0 )
+                    {
+                        cid = temp[i];
+                        break;
+                    }
+                }
 
                 String update = node.text("div.itemTxt > p:eq(3) > span.date");
                 String author = node.text("div.itemTxt > p:eq(1)");

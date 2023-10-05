@@ -283,6 +283,8 @@ public class MainActivity extends BaseActivity implements MainView, NavigationVi
             case PreferenceManager.HOME_DOWNLOAD:
                 mCheckItem = R.id.drawer_comic;
                 break;
+
+
             case PreferenceManager.HOME_SOURCE:
                 mCheckItem = R.id.drawer_source;
                 break;
@@ -298,6 +300,7 @@ public class MainActivity extends BaseActivity implements MainView, NavigationVi
 
     private boolean refreshCurrentFragment() {
         mCurrentFragment = mFragmentArray.get(mCheckItem);
+
         if (mCurrentFragment == null) {
             switch (mCheckItem) {
                 case R.id.drawer_comic:
@@ -310,9 +313,15 @@ public class MainActivity extends BaseActivity implements MainView, NavigationVi
 //                    mCurrentFragment = new TagFragment();
 //                    break;
             }
+
+            Toast toast = Toast.makeText(this, "构建view", Toast.LENGTH_SHORT);
+            //toast.show();
             mFragmentArray.put(mCheckItem, mCurrentFragment);
             return false;
         }
+
+        Toast toast = Toast.makeText(this, "不需要构建view", Toast.LENGTH_SHORT);
+        //toast.show();
         return true;
     }
 

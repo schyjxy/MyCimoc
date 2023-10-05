@@ -56,14 +56,14 @@ public class UpdateHelper {
     private static void initSource(DaoSession session) {
         List<Source> list = new ArrayList<>();
         //list.add(IKanman.getDefaultSource());
-        list.add(Dmzj.getDefaultSource());
+        //list.add(Dmzj.getDefaultSource());
         //list.add(HHAAZZ.getDefaultSource());
         //list.add(CCTuku.getDefaultSource());
         //list.add(U17.getDefaultSource());
         list.add(DM5.getDefaultSource());
         //list.add(Webtoon.getDefaultSource());
         list.add(MH57.getDefaultSource());
-        list.add(Dmzjv2.getDefaultSource());
+        //list.add(Dmzjv2.getDefaultSource());
         //list.add(MangaNel.getDefaultSource());
         //list.add(Mangakakalot.getDefaultSource());
         //list.add(PuFei.getDefaultSource());

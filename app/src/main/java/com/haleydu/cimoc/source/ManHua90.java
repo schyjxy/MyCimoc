@@ -24,6 +24,7 @@ import org.json.JSONException;
 
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -104,6 +105,8 @@ public class ManHua90 extends MangaParser {
             Chapter chapter = new Chapter(Long.parseLong(sourceComic + "000" + i++), sourceComic, title, path);
             list.add(chapter);
         }
+
+        Collections.reverse(list);
         return list;
     }
 

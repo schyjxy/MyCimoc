@@ -21,6 +21,7 @@ import org.json.JSONException;
 
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -30,7 +31,7 @@ import okhttp3.Request;
 public class JiuJiuManHua extends MangaParser {
     public static final int TYPE = 148;
     public static final String DEFAULT_TITLE = "久久漫画";
-    public static final String baseUrl = "http://99hanman.top";
+    public static final String baseUrl = "https://99hanman.top/";//http://99hanman.top
     final  String TAG = "JiuJiuManHua";
 
     public  JiuJiuManHua(Source source) {
@@ -99,6 +100,7 @@ public class JiuJiuManHua extends MangaParser {
             String path = node.attr("a", "href");
             list.add(new Chapter(Long.parseLong(sourceComic + "000" + i++), sourceComic, title, path));
         }
+        Collections.reverse(list);
         return list;
     }
 

@@ -59,7 +59,7 @@ public class BrowserFilter extends BaseActivity {
     private List<Integer> registUrlListener() {
         List<Integer> list = new ArrayList<>();
 
-        list.add(Dmzjv2.TYPE);
+        //list.add(Dmzjv2.TYPE);
         list.add(BuKa.TYPE);
         list.add(PuFei.TYPE);
         list.add(Cartoonmad.TYPE);

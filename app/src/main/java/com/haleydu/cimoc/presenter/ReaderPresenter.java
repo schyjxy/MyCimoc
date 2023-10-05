@@ -283,7 +283,7 @@ public class ReaderPresenter extends BasePresenter<ReaderView> {
                     }
                 }));
     }
-
+    //因为是从大到小排列，所以上一页是index + 1
     private static class ReaderChapterManger {
 
         private Chapter[] array;
@@ -294,8 +294,8 @@ public class ReaderPresenter extends BasePresenter<ReaderView> {
         ReaderChapterManger(Chapter[] array, int index) {
             this.array = array;
             this.index = index;
-            prev = index - 1;
-            next = index + 1;
+            prev = index + 1;
+            next = index - 1;
         }
 
         Chapter getPrevChapter() {
@@ -303,7 +303,7 @@ public class ReaderPresenter extends BasePresenter<ReaderView> {
         }
 
         Chapter getNextChapter() {
-            if(next >= array.length - 1)
+            if(next >= array.length - 1 || next < 0)
                 return null;
 
             return array[next];
@@ -313,8 +313,8 @@ public class ReaderPresenter extends BasePresenter<ReaderView> {
             int id = prev;
             if(index - 1 > 0) {
                 index--;
-                prev = index - 1;
-                next = index + 1;
+                prev = index + 1;
+                next = index - 1;
             }
 
             return array[id];
@@ -324,8 +324,8 @@ public class ReaderPresenter extends BasePresenter<ReaderView> {
             int id = next;
             if(next + 1 < array.length) {
                 index++;
-                prev = index - 1;
-                next = index + 1;
+                prev = index + 1;
+                next = index - 1;
             }
             return array[id];
         }

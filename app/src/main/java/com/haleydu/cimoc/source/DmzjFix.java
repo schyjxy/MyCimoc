@@ -92,7 +92,7 @@ public class DmzjFix extends MangaParser {
 
     @Override
     public Request getInfoRequest(String cid) {
-        String url = StringUtils.format("http://api.dmzj.com/dynamic/comicinfo/%s.json", cid);
+        String url = getUrl(cid);
         return new Request.Builder().url(url).build();
     }
 
@@ -104,17 +104,18 @@ public class DmzjFix extends MangaParser {
     @Override
     public Comic parseInfo(String html, Comic comic) throws UnsupportedEncodingException {
         try {
-            JSONObject root = new JSONObject(html).getJSONObject("data");
-            JSONObject info = root.getJSONObject("info");
-            String title = info.getString("title");
-            boolean status = !info.getString("status").contains("连载");
-            String cover = info.getString("cover");
-            String author = info.getString("authors");
-            String update = info.getString("last_updatetime");
-            update = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date(Integer.parseInt(update) * 1000));
-            String intro = info.getString("description");
+            Node body = new Node(html);
+            String title = body.text("#comicName");
+            String cover = body.src("#Cover > img");
+            String author = body.text(".txtItme:nth-child(1) > a");
+            String intro = body.text(".txtDesc.autoHeight");
+            boolean status = isFinish(body.text(".txtItme:nth-child(3) > a:nth-child(4)"));
+            String update = body.text(".txtItme:nth-child(4) >span:nth-child(2)");
+            if (update == null || update.equals("")) {
+                update = "没找到最后更新日期";
+            }
             comic.setInfo(title, cover, update, intro, author, status);
-        } catch (JSONException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return comic;
@@ -123,27 +124,27 @@ public class DmzjFix extends MangaParser {
     @Override
     public List<Chapter> parseChapter(String html, Comic comic, Long sourceComic) {
         List<Chapter> list = new LinkedList<>();
-        List<Chapter> list1 = new LinkedList<>();
-
         try {
-            JSONArray root = new JSONObject(html).getJSONObject("data").getJSONArray("list");
-            for (int i = 0; i < root.length(); i++) {
-                JSONObject chapter = root.getJSONObject(i);
-                String title = chapter.getString("chapter_name");
-                String comic_id = chapter.getString("comic_id");
-                String chapter_id = chapter.getString("id");
-                String path = comic_id + "/" + chapter_id;
-                list.add(new Chapter(Long.parseLong(sourceComic + "000" + i + 1), sourceComic, title, path, "默认线路"));
-                list1.add(new Chapter(Long.parseLong(sourceComic + "001" + i + 1), sourceComic, title.concat(" (备用)"), path + "x", "备用线路"));
-
-
+            String JsonArrayString = StringUtils.match("initIntroData\\((.*)\\);", html, 1);
+            String decodeJsonArrayString = UicodeBackslashU.unicodeToCn(JsonArrayString);
+            JSONArray allJsonArray = new JSONArray(decodeJsonArrayString);
+            int k=0;
+            for (int i=0;i<allJsonArray.length();i++){
+                JSONArray JSONArray = allJsonArray.getJSONObject(i).getJSONArray("data");
+                String tag = allJsonArray.getJSONObject(i).getString("title");
+                for (int j = 0; j != JSONArray.length(); ++j) {
+                    JSONObject chapter = JSONArray.getJSONObject(j);
+                    String title = chapter.getString("chapter_name");
+                    String comic_id = chapter.getString("comic_id");
+                    String chapter_id = chapter.getString("id");
+                    String path = comic_id + "/" +chapter_id;
+                    list.add(new Chapter(Long.parseLong(sourceComic + "000" + k++), sourceComic, tag+" "+title, path));
+                }
             }
-            list.addAll(list1);
 
-        } catch (JSONException e) {
+
+        } catch (Exception e) {
             e.printStackTrace();
-            return null;
-
         }
         return list;
 
