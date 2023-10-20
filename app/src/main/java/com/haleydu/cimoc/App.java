@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Environment;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.WindowManager;
 
 import com.facebook.drawee.backends.pipeline.Fresco;
@@ -110,7 +111,7 @@ public class App extends MultiDexApplication implements AppGetter, Thread.Uncaug
 
             @Override
             public void onActivityResumed(Activity activity) {
-
+                Log.d("ActivityLifecycle:",activity+"=========生命周期回复onActivityStarted=====");
             }
 
             @Override
@@ -152,7 +153,9 @@ public class App extends MultiDexApplication implements AppGetter, Thread.Uncaug
             DocumentFile file = DocumentUtils.getOrCreateFile(dir, StringUtils.getDateStringWithSuffix("log"));
             DocumentUtils.writeStringToFile(getContentResolver(), file, sb.toString());
         } catch (Exception ex) {
+            ex.printStackTrace();
         }
+
         mActivityLifecycle.clear();
         System.exit(1);
     }
@@ -211,7 +214,7 @@ public class App extends MultiDexApplication implements AppGetter, Thread.Uncaug
     public RecyclerView.RecycledViewPool getGridRecycledPool() {
         if (mRecycledPool == null) {
             mRecycledPool = new RecyclerView.RecycledViewPool();
-            mRecycledPool.setMaxRecycledViews(GridAdapter.TYPE_GRID, 20);
+            mRecycledPool.setMaxRecycledViews(GridAdapter.TYPE_GRID, 50);
         }
         return mRecycledPool;
     }

@@ -1,12 +1,16 @@
 package com.haleydu.cimoc.source;
 
+import android.util.Pair;
+
 import com.google.common.collect.Lists;
 import com.haleydu.cimoc.model.Chapter;
 import com.haleydu.cimoc.model.Comic;
 import com.haleydu.cimoc.model.ImageUrl;
 import com.haleydu.cimoc.model.Source;
+import com.haleydu.cimoc.parser.MangaCategory;
 import com.haleydu.cimoc.parser.MangaParser;
 import com.haleydu.cimoc.parser.NodeIterator;
+import com.haleydu.cimoc.parser.Parser;
 import com.haleydu.cimoc.parser.SearchIterator;
 import com.haleydu.cimoc.parser.UrlFilter;
 import com.haleydu.cimoc.soup.Node;
@@ -17,6 +21,7 @@ import org.json.JSONException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -29,21 +34,22 @@ public class JMTT extends MangaParser {
 
     public static final int TYPE = 72;
     public static final String DEFAULT_TITLE = "禁漫天堂";
-    public static final String baseUrl = "https://18-comic2.work/"; //https://cm365.xyz/7MJX9t
+    public static final String baseUrl = "https://18comic-god.org/"; //https://cm365.xyz/7MJX9t
+    private final String userAgent = "PostmanRuntime/7.29.0";
 
     public static Source getDefaultSource() {
         return new Source(null, DEFAULT_TITLE, TYPE, true);
     }
 
     public JMTT(Source source) {
-        init(source, null);
+        init(source, new  Category());
     }
 
     @Override
     public Request getSearchRequest(String keyword, int page) throws UnsupportedEncodingException {
         if (page != 1) return null;
         String url = StringUtils.format(baseUrl + "/search/photos?search_query=%s&main_tag=0", keyword);
-        return new Request.Builder().url(url).build();
+        return new Request.Builder().url(url).addHeader("User-Agent", userAgent).build();
     }
 
     @Override
@@ -69,14 +75,13 @@ public class JMTT extends MangaParser {
 
     @Override
     protected void initUrlFilterList() {
-        filter.add(new UrlFilter(baseUrl));
         filter.add(new UrlFilter("https://18comic.vip"));
     }
 
     @Override
     public Request getInfoRequest(String cid) {
         String url = baseUrl + cid;
-        return new Request.Builder().url(url).build();
+        return new Request.Builder().url(url).addHeader("User-Agent", userAgent).build();
     }
 
     @Override
@@ -117,7 +122,7 @@ public class JMTT extends MangaParser {
     public Request getImagesRequest(String cid, String path) {
         String url = baseUrl+path;
         imgpath = path;
-        return new Request.Builder().url(url).build();
+        return new Request.Builder().url(url).addHeader("User-Agent", userAgent).addHeader("Href", baseUrl).build();
     }
 
     @Override
@@ -144,6 +149,33 @@ public class JMTT extends MangaParser {
         return list;
     }
 
+    @Override
+    public Request getCategoryRequest(String format, int page) {
+        String url = StringUtils.format(format, page);
+        return new Request.Builder().url(url)
+                .addHeader("User-Agent", userAgent)
+                .addHeader("Href", url)
+                .build();
+    }
+
+    public List<Comic> parseCategory(String html, int page) {
+        List<Comic> list = new ArrayList<>();
+        Node body = new Node(html);
+        for (Node node : body.list("div.thumb-overlay-albums")) {
+            String cid = node.attr("a", "href");
+            String title = node.attr("a > img", "title");
+            String cover = node.attr("a > img", "src");
+            String author = "佚名";
+
+            if(title.contains("[") && title.contains("]")) {
+                String temp = title.substring(title.indexOf("[") + 1);
+                author = temp.substring(0, temp.indexOf("]") - 1);
+            }
+            list.add(new Comic(TYPE, cid, title, cover, null, author));
+        }
+        return list;
+    }
+
 
     @Override
     public Request getCheckRequest(String cid) {
@@ -158,5 +190,33 @@ public class JMTT extends MangaParser {
     @Override
     public Headers getHeader() {
         return Headers.of("Referer", baseUrl);
+    }
+
+    private static class Category extends MangaCategory {
+
+        @Override
+        public boolean isComposite() {
+            return true;
+        }
+
+        @Override
+        public String getFormat(String... args) {
+            String path = args[CATEGORY_SUBJECT].concat(" ").trim();
+            if (path.isEmpty()) {
+                path = String.valueOf(0);
+            } else {
+                path = path.replaceAll("\\s+", "-");
+            }
+
+            String format = StringUtils.format("%s%s", JMTT.baseUrl, path);
+            return format;
+        }
+
+        @Override
+        public List<Pair<String, String>> getSubject() {
+            List<Pair<String, String>> list = new ArrayList<>();
+            list.add(Pair.create("最近更新", "albums?o=mr&page=%d"));
+            return list;
+        }
     }
 }

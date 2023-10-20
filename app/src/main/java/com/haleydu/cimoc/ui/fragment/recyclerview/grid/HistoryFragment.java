@@ -6,6 +6,7 @@ import com.haleydu.cimoc.R;
 import com.haleydu.cimoc.model.MiniComic;
 import com.haleydu.cimoc.presenter.BasePresenter;
 import com.haleydu.cimoc.presenter.HistoryPresenter;
+import com.haleydu.cimoc.ui.activity.MainActivity;
 import com.haleydu.cimoc.ui.fragment.dialog.MessageDialogFragment;
 import com.haleydu.cimoc.ui.view.HistoryView;
 import com.haleydu.cimoc.utils.HintUtils;

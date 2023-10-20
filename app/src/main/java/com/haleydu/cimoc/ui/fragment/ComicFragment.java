@@ -19,6 +19,7 @@ import com.haleydu.cimoc.model.Tag;
 import com.haleydu.cimoc.presenter.BasePresenter;
 import com.haleydu.cimoc.presenter.ComicPresenter;
 import com.haleydu.cimoc.source.Null;
+import com.haleydu.cimoc.ui.activity.MainActivity;
 import com.haleydu.cimoc.ui.activity.PartFavoriteActivity;
 import com.haleydu.cimoc.ui.activity.SearchActivity;
 import com.haleydu.cimoc.ui.adapter.TabPagerAdapter;

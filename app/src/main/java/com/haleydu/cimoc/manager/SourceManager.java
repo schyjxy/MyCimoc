@@ -179,6 +179,9 @@ public class SourceManager {
                 case DmzjFix.TYPE:
                     parser = new DmzjFix(source);
                     break;
+                case HanguoManHua.TYPE:
+                    parser = new HanguoManHua(source);
+                    break;
                 default:
                     parser = new Null();
                     break;

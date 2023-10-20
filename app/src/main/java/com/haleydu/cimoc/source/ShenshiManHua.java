@@ -158,7 +158,6 @@ public class ShenshiManHua extends MangaParser {
             }
             list.add(new Comic(TYPE, cid, title, cover, null, author));
         }
-        Collections.reverse(list);
         return list;
     }
 

@@ -43,7 +43,7 @@ public class DownloadFragment extends GridFragment implements DownloadView {
 
     @Override
     protected void initView() {
-        isDownload = ServiceUtils.isServiceRunning(getActivity(), DownloadService.class);
+        isDownload = ServiceUtils.isServiceRunning(getActivity(), DownloadService.class);//判断下载服务器是否正在下载
         super.initView();
     }
 

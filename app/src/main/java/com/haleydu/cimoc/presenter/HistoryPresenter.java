@@ -5,6 +5,7 @@ import com.haleydu.cimoc.model.Comic;
 import com.haleydu.cimoc.model.MiniComic;
 import com.haleydu.cimoc.rx.RxEvent;
 import com.haleydu.cimoc.rx.ToAnotherList;
+import com.haleydu.cimoc.ui.activity.MainActivity;
 import com.haleydu.cimoc.ui.view.HistoryView;
 
 import java.util.List;
@@ -48,6 +49,7 @@ public class HistoryPresenter extends BasePresenter<HistoryView> {
     }
 
     public void load() {
+
         mCompositeSubscription.add(mComicManager.listHistoryInRx()
                 .compose(new ToAnotherList<>(new Func1<Comic, Object>() {
                     @Override

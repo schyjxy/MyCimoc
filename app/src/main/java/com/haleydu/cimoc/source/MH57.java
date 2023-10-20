@@ -32,7 +32,7 @@ public class MH57 extends MangaParser {
 
     public static final int TYPE = 8;
     public static final String DEFAULT_TITLE = "57漫画";
-    public static String host = "http://m.wuqimh.net/";
+    public static String host = "http://www.wuqimh.net/";
 
     private static final String[] servers = {
             "http://images.lancaier.com"
@@ -64,14 +64,14 @@ public class MH57 extends MangaParser {
                 e.printStackTrace();
             }
         }
-        return new NodeIterator(body.list("#data_list > li")) {
+        return new NodeIterator(body.list("li.cf")) {
             @Override
             protected Comic parse(Node node) {
-                String cid = node.hrefWithSplit("a:eq(0)", 0);
-                String title = node.text("a:eq(0) > h3");
-                String cover = node.attr("a:eq(0) > div.thumb > img", "data-src");
-                String update = node.text("dl:eq(4) > dd");
-                String author = node.text("dl:eq(1) > a > dd");
+                String cid = node.attr("div:nth-child(1) >a", "href").substring(1);
+                String title = node.attr("div:nth-child(1) >a", "title");
+                String cover = node.attr("div:nth-child(1) >a >img", "src");
+                String update = node.text("div:nth-child(2) > dl >dd >span >span:nth-child(3)");
+                String author = node.text("div:nth-child(2) >dl >dd:nth-child(4) >span >a");
                 return new Comic(TYPE, cid, title, cover, update, author);
             }
         };
@@ -96,12 +96,12 @@ public class MH57 extends MangaParser {
     @Override
     public Comic parseInfo(String html, Comic comic) {
         Node body = new Node(html);
-        String title = body.text("div.main-bar > h1");
-        String cover = body.src("div.book-detail > div.cont-list > div.thumb > img");
-        String update = body.text("div.book-detail > div.cont-list > dl:eq(7) > dd");
-        String author = body.text("div.book-detail > div.cont-list > dl:eq(3) > dd");
-        String intro = body.text("#bookIntro");
-        boolean status = isFinish(body.text("div.book-detail > div.cont-list > div.thumb > i"));
+        String title = body.text(".book-title >h1");
+        String cover = body.src(".hcover > img");
+        String update = body.text("li.status > span >span:nth-child(3)");
+        String author = body.text("ul.detail-list.cf > li:nth-child(2) > span:nth-child(2) >a");
+        String intro = body.text(".book-intro >div:nth-child(2) > p");
+        boolean status = isFinish(body.text("li.status > span >span:nth-child(2)"));
         comic.setInfo(title, cover, update, intro, author, status);
         return comic;
     }
@@ -111,9 +111,9 @@ public class MH57 extends MangaParser {
         List<Chapter> list = new LinkedList<>();
         Node body = new Node(html);
         int i=0;
-        for (Node node : body.list("#chapterList > ul > li > a")) {
-            String title = node.text();
-            String path = node.hrefWithSplit(1);
+        for (Node node : body.list("#chpater-list-1 > ul > li > a")) {
+            String title = node.attr("title");
+            String path = node.href().substring(1);
             list.add(new Chapter(Long.parseLong(sourceComic + "000" + i++), sourceComic, title, path));
         }
         return list;
@@ -121,7 +121,7 @@ public class MH57 extends MangaParser {
 
     @Override
     public Request getImagesRequest(String cid, String path) {
-        String url = StringUtils.format("%s%s/%s.html", host, cid, path);
+        String url = StringUtils.format("%s/%s", host, path);
         return new Request.Builder().url(url).build();
     }
 
@@ -186,7 +186,7 @@ public class MH57 extends MangaParser {
 
     @Override
     public Headers getHeader() {
-        return Headers.of("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.149 Safari/537.36", "Host", host);
+        return Headers.of("Referer", host);
     }
 
     private static class Category extends MangaCategory {

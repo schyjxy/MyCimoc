@@ -27,7 +27,7 @@ public class UpdateHelper {
             initSource(session);
             manager.putInt(PreferenceManager.PREF_APP_VERSION, VERSION);
         }
-        //initSource(session);
+        initSource(session);
     }
 
     /**
@@ -95,6 +95,7 @@ public class UpdateHelper {
         list.add(CopyMH.getDefaultSource());
         list.add(WebtoonDongManManHua.getDefaultSource());
         list.add(MH160.getDefaultSource());
+        list.add(HanguoManHua.getDefaultSource());
         //list.add(QiMiaoMH.getDefaultSource());
         //list.add(YKMH.getDefaultSource());
         list.add(DmzjFix.getDefaultSource());

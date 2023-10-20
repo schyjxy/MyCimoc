@@ -299,20 +299,19 @@ public class ReaderPresenter extends BasePresenter<ReaderView> {
         }
 
         Chapter getPrevChapter() {
-            return prev >= 0? array[prev] : null;
+            return prev <= array.length - 1? array[prev] : null;
         }
 
         Chapter getNextChapter() {
-            if(next >= array.length - 1 || next < 0)
+            if( next < 0)
                 return null;
-
             return array[next];
         }
         ////真正切换上一章
         Chapter prevChapter() {
             int id = prev;
-            if(index - 1 > 0) {
-                index--;
+            if(index  <= array.length - 1) {
+                index++;
                 prev = index + 1;
                 next = index - 1;
             }
@@ -322,12 +321,14 @@ public class ReaderPresenter extends BasePresenter<ReaderView> {
         //真正切换下一章
         Chapter nextChapter() {
             int id = next;
-            if(next + 1 < array.length) {
-                index++;
+            if(next >= 0) {
+                index--;
                 prev = index + 1;
                 next = index - 1;
+                return array[id];
             }
-            return array[id];
+
+            return null;
         }
 
         Chapter movePrev() {

@@ -1,6 +1,7 @@
 package com.haleydu.cimoc.source;
 
 import android.util.Base64;
+import android.util.Pair;
 
 import com.facebook.common.util.Hex;
 import com.google.common.collect.Lists;
@@ -10,6 +11,7 @@ import com.haleydu.cimoc.model.Comic;
 import com.haleydu.cimoc.model.ImageUrl;
 import com.haleydu.cimoc.model.Source;
 import com.haleydu.cimoc.parser.JsonIterator;
+import com.haleydu.cimoc.parser.MangaCategory;
 import com.haleydu.cimoc.parser.MangaParser;
 import com.haleydu.cimoc.parser.SearchIterator;
 import com.haleydu.cimoc.parser.UrlFilter;
@@ -22,6 +24,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -48,7 +52,7 @@ public class CopyMH extends MangaParser {
     }
 
     public CopyMH(Source source) {
-        init(source, null);
+        init(source, new Category());
     }
 
     @Override
@@ -152,8 +156,31 @@ public class CopyMH extends MangaParser {
         byte[] hexArry = Hex.decodeHex(value);
         byte[] temp = Base64.encode(hexArry, 0);
         byte[] code = Base64.decode(temp, Base64.DEFAULT);
-
         return new String(cipher.doFinal(code));
+    }
+
+    @Override
+    public Request getCategoryRequest(String format, int page) {
+        String url = StringUtils.format(format, page);
+        return new Request.Builder().url(url).addHeader("Host", "www.copymanga.tv")
+                .addHeader("User-Agent", userAgent)
+        .build();
+    }
+
+    public List<Comic> parseCategory(String html, int page) {
+        List<Comic> list = new ArrayList<>();
+        Node body = new Node(html);
+        for (Node node : body.list(".col-auto.exemptComic_Item")) {
+            String cid = node.attr("div > a", "href");
+            cid = cid.substring(cid.lastIndexOf("/") + 1);
+
+            String title = node.attr("div:nth-child(2)  >div >a >p", "title");
+            String cover = node.attr("div:nth-child(1) > a > img", "data-src");
+            String author = node.text(" div:nth-child(2)  >div >span >a");
+            list.add(new Comic(TYPE, cid, title, cover, null, author));
+        }
+        Collections.reverse(list);
+        return list;
     }
 
     @Override
@@ -240,5 +267,28 @@ public class CopyMH extends MangaParser {
     @Override
     public Headers getHeader() {
         return Headers.of("Referer", website);
+    }
+
+    private static class Category extends MangaCategory {
+
+        @Override
+        public String getFormat(String... args) {
+            String path = args[CATEGORY_SUBJECT].concat(" ").trim();
+            if (path.isEmpty()) {
+                path = String.valueOf(0);
+            } else {
+                path = path.replaceAll("\\s+", "-");
+            }
+
+            String format = StringUtils.format("%s/%s", CopyMH.website, path);
+            return format;
+        }
+
+        @Override
+        protected List<Pair<String, String>> getSubject() {
+            List<Pair<String, String>> list = new ArrayList<>();
+            list.add(Pair.create("热门推荐", "recommend?type=3200102&offset=%d&limit=60"));
+            return list;
+        }
     }
 }

@@ -1,5 +1,6 @@
 package com.haleydu.cimoc.ui.activity;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
@@ -47,12 +48,14 @@ import com.haleydu.cimoc.manager.PreferenceManager;
 import com.haleydu.cimoc.manager.SourceManager;
 import com.haleydu.cimoc.presenter.BasePresenter;
 import com.haleydu.cimoc.presenter.MainPresenter;
+import com.haleydu.cimoc.source.Null;
 import com.haleydu.cimoc.ui.fragment.BaseFragment;
 import com.haleydu.cimoc.ui.fragment.ComicFragment;
 import com.haleydu.cimoc.ui.fragment.dialog.MessageDialogFragment;
 import com.haleydu.cimoc.ui.fragment.recyclerview.SourceFragment;
 import com.haleydu.cimoc.ui.view.MainView;
 import com.haleydu.cimoc.utils.HintUtils;
+import com.haleydu.cimoc.utils.HttpUtils;
 import com.haleydu.cimoc.utils.PermissionUtils;
 
 import com.king.app.updater.constant.Constants;
@@ -71,8 +74,9 @@ public class MainActivity extends BaseActivity implements MainView, NavigationVi
     //private static final int DIALOG_REQUEST_LOGOUT = 2;
 
     private static final int REQUEST_ACTIVITY_SETTINGS = 0;
-
     private static final int FRAGMENT_NUM = 3;
+
+    public static Context main_context = null;
 
     @BindView(R.id.main_layout)
     DrawerLayout mDrawerLayout;
@@ -112,75 +116,17 @@ public class MainActivity extends BaseActivity implements MainView, NavigationVi
 
     @Override
     protected void initView() {
+        main_context = this;
         initDrawerToggle();
         initNavigation();
         initFragment();
     }
 
-//    private void login() {
-//        HintUtils.showToast(MainActivity.this, R.string.user_login_tips);
-//        WebAuthProvider.init(auth0)
-//            .withScheme("demo")
-//            .withScope("openid profile email")
-//            .withAudience(String.format("https://%s/userinfo", getString(R.string.com_auth0_domain)))
-//            .start(MainActivity.this, new AuthCallback() {
-//                @Override
-//                public void onFailure(@NonNull final Dialog dialog) {
-//                    runOnUiThread(new Runnable() {
-//                        @Override
-//                        public void run() {
-//                            dialog.show();
-//                        }
-//                    });
-//                }
-//
-//                @Override
-//                public void onFailure(final AuthenticationException exception) {
-//                    runOnUiThread(new Runnable() {
-//                        @Override
-//                        public void run() {
-////                            Toast.makeText(MainActivity.this, "Error: " + exception.getMessage(), Toast.LENGTH_SHORT).show();
-//                            HintUtils.showToast(MainActivity.this, R.string.user_login_failed);
-//                        }
-//                    });
-//                }
-//
-//                @Override
-//                public void onSuccess(@NonNull final Credentials credentials) {
-//                    runOnUiThread(new Runnable() {
-//                        @Override
-//                        public void run() {
-////                            Toast.makeText(MainActivity.this, "Logged in: " + credentials.getAccessToken(), Toast.LENGTH_LONG).show();
-//                            HintUtils.showToast(MainActivity.this, R.string.user_login_sucess);
-//                            mPreference.putString(PreferenceManager.PREFERENCES_USER_TOCKEN, credentials.getAccessToken());
-//                            getUesrInfo();
-//                        }
-//                    });
-//                }
-//            });
-//    }
-//
-//    private void logoutShowDialog(){
-//        MessageDialogFragment fragment = MessageDialogFragment.newInstance(R.string.user_login_logout,
-//            R.string.user_login_logout_tips, true, DIALOG_REQUEST_LOGOUT);
-//        fragment.show(getSupportFragmentManager(), null);
-//    }
-//
-//    private void logout() {
-//        HintUtils.showToast(MainActivity.this, R.string.user_login_logout_sucess);
-//        mPreference.putString(PreferenceManager.PREFERENCES_USER_EMAIL, "");
-//        mPreference.putString(PreferenceManager.PREFERENCES_USER_TOCKEN, "");
-//        mPreference.putString(PreferenceManager.PREFERENCES_USER_NAME, "");
-//        mPreference.putString(PreferenceManager.PREFERENCES_USER_ID, "");
-//    }
-//
-//    private void loginout() {
-//        if (mPreference.getString(PreferenceManager.PREFERENCES_USER_ID, "") == "") {
-//            login();
-//        } else {
-//            logoutShowDialog();
-//        }
-//    }
+    public static void ShowToast(String text)
+    {
+        Toast toast = Toast.makeText(main_context, text, Toast.LENGTH_SHORT);
+        toast.show();
+    }
 
     @Override
     protected void initData() {
@@ -194,47 +140,13 @@ public class MainActivity extends BaseActivity implements MainView, NavigationVi
             }
             checkUpdate();
         }
-        mPresenter.getSourceBaseUrl();
+        //mPresenter.getSourceBaseUrl();
 
         showAuthorNotice();
         showPermission();
         getMh50KeyIv();
 
     }
-
-
-//    public void getUesrInfo() {
-//        String accessTocken = mPreference.getString(PreferenceManager.PREFERENCES_USER_TOCKEN, null);
-//        if (accessTocken != null) {
-//            AuthenticationAPIClient authentication = new AuthenticationAPIClient(auth0);
-//            authentication
-//                .userInfo(accessTocken)
-//                .start(new BaseCallback<UserProfile, AuthenticationException>() {
-//                    @Override
-//                    public void onSuccess(UserProfile information) {
-//                        //user information received
-//                        mPreference.putString(PreferenceManager.PREFERENCES_USER_EMAIL, information.getEmail());
-//                        mPreference.putString(PreferenceManager.PREFERENCES_USER_NAME, information.getName());
-//                        mPreference.putString(PreferenceManager.PREFERENCES_USER_ID, (String) information.getExtraInfo().get("sub"));
-//                    }
-//
-//                    @Override
-//                    public void onFailure(AuthenticationException error) {
-//                        //user information request failed
-//                        HintUtils.showToast(MainActivity.this, R.string.user_login_failed);
-//                    }
-//                });
-//        } else {
-//            HintUtils.showToast(MainActivity.this, R.string.user_login_failed);
-//        }
-//    }
-
-//    @Override
-//    protected void initUser() {
-//        //auth0
-//        auth0 = new Auth0(this);
-//        auth0.setOIDCConformant(true);
-//    }
 
     private void initDrawerToggle() {
         mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, mToolbar, 0, 0) {
@@ -304,24 +216,19 @@ public class MainActivity extends BaseActivity implements MainView, NavigationVi
         if (mCurrentFragment == null) {
             switch (mCheckItem) {
                 case R.id.drawer_comic:
-                    mCurrentFragment = new ComicFragment();
+                    mCurrentFragment = new ComicFragment();//绘制漫画
                     break;
                 case R.id.drawer_source:
-                    mCurrentFragment = new SourceFragment();
+                    mCurrentFragment = new SourceFragment();//绘制源
                     break;
 //                case R.id.drawer_tag:
 //                    mCurrentFragment = new TagFragment();
 //                    break;
             }
 
-            Toast toast = Toast.makeText(this, "构建view", Toast.LENGTH_SHORT);
-            //toast.show();
             mFragmentArray.put(mCheckItem, mCurrentFragment);
             return false;
         }
-
-        Toast toast = Toast.makeText(this, "不需要构建view", Toast.LENGTH_SHORT);
-        //toast.show();
         return true;
     }
 
@@ -355,7 +262,7 @@ public class MainActivity extends BaseActivity implements MainView, NavigationVi
             finish();
         }
     }
-    //设置左侧菜单项
+    //设置左侧导航菜单项
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         int itemId = item.getItemId();
