@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import android.view.View;
 
+import com.haleydu.cimoc.App;
 import com.haleydu.cimoc.R;
 import com.haleydu.cimoc.manager.SourceManager;
 import com.haleydu.cimoc.model.Comic;
@@ -69,7 +70,9 @@ public abstract class GridFragment extends RecyclerViewFragment implements GridV
 
     @Override
     protected RecyclerView.LayoutManager initLayoutManager() {
-        GridLayoutManager manager = new GridLayoutManager(getActivity(), 6);//这里设置列数
+        float val = App.mWidthPixels / (App.mDensity * 140);
+        int column = (int)Math.ceil(val);
+        GridLayoutManager manager = new GridLayoutManager(getActivity(),  column);//这里设置列数
         manager.setRecycleChildrenOnDetach(true);
         return manager;
     }

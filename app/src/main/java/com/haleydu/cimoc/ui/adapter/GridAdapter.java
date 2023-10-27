@@ -131,7 +131,10 @@ public class GridAdapter extends BaseAdapter<Object> {
             public void getItemOffsets(@NotNull Rect outRect, @NotNull View view,
                                        @NotNull RecyclerView parent, @NotNull RecyclerView.State state) {
                 int offset = parent.getWidth() / 90;
-                outRect.set(offset, 0, offset, (int) (2.8 * offset));
+                int width = parent.getWidth();
+                int height = parent.getHeight();
+                //outRect.set(offset, 0, offset, (int) (2.8 * offset));
+                outRect.set(5,5,5,5);
             }
 
         };

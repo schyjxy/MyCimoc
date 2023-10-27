@@ -58,6 +58,7 @@ public class App extends MultiDexApplication implements AppGetter, Thread.Uncaug
     public static int mHeightPixels;
     public static int mCoverWidthPixels;
     public static int mCoverHeightPixels;
+    public static float mDensity;
     public static int mLargePixels;
 
     private static OkHttpClient mHttpClient;
@@ -111,7 +112,6 @@ public class App extends MultiDexApplication implements AppGetter, Thread.Uncaug
 
             @Override
             public void onActivityResumed(Activity activity) {
-                Log.d("ActivityLifecycle:",activity+"=========生命周期回复onActivityStarted=====");
             }
 
             @Override
@@ -186,7 +186,8 @@ public class App extends MultiDexApplication implements AppGetter, Thread.Uncaug
         ((WindowManager) getSystemService(WINDOW_SERVICE)).getDefaultDisplay().getMetrics(metrics);
         mWidthPixels = metrics.widthPixels;
         mHeightPixels = metrics.heightPixels;
-        mCoverWidthPixels = mWidthPixels / 3;
+        mDensity = metrics.density;
+        mCoverWidthPixels = mWidthPixels / 6;
         mCoverHeightPixels = mHeightPixels * mCoverWidthPixels / mWidthPixels;
         mLargePixels = 3 * metrics.widthPixels * metrics.heightPixels;
     }

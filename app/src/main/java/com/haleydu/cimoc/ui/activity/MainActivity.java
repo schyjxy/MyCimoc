@@ -21,6 +21,8 @@ import androidx.core.content.ContextCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.appcompat.app.ActionBarDrawerToggle;
+import androidx.fragment.app.Fragment;
+
 import android.os.Environment;
 import android.provider.Settings;
 import android.util.Log;
@@ -76,8 +78,6 @@ public class MainActivity extends BaseActivity implements MainView, NavigationVi
     private static final int REQUEST_ACTIVITY_SETTINGS = 0;
     private static final int FRAGMENT_NUM = 3;
 
-    public static Context main_context = null;
-
     @BindView(R.id.main_layout)
     DrawerLayout mDrawerLayout;
     @BindView(R.id.main_navigation_view)
@@ -97,7 +97,7 @@ public class MainActivity extends BaseActivity implements MainView, NavigationVi
     private String mLastCid;
 
     private int mCheckItem;
-    private SparseArray<BaseFragment> mFragmentArray;
+    private SparseArray<BaseFragment> mFragmentArray = new SparseArray<>(FRAGMENT_NUM);
     private BaseFragment mCurrentFragment;
     private boolean night;
 
@@ -113,19 +113,11 @@ public class MainActivity extends BaseActivity implements MainView, NavigationVi
         mPresenter.attachView(this);
         return mPresenter;
     }
-
     @Override
     protected void initView() {
-        main_context = this;
         initDrawerToggle();
         initNavigation();
         initFragment();
-    }
-
-    public static void ShowToast(String text)
-    {
-        Toast toast = Toast.makeText(main_context, text, Toast.LENGTH_SHORT);
-        toast.show();
     }
 
     @Override
@@ -141,21 +133,20 @@ public class MainActivity extends BaseActivity implements MainView, NavigationVi
             checkUpdate();
         }
         //mPresenter.getSourceBaseUrl();
-
         showAuthorNotice();
         showPermission();
         getMh50KeyIv();
-
     }
 
     private void initDrawerToggle() {
         mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, mToolbar, 0, 0) {
             @Override
-            public void onDrawerClosed(View drawerView) {
+            public void onDrawerClosed(View drawerView) { //关闭事件触发
                 super.onDrawerClosed(drawerView);
                 if (refreshCurrentFragment()) {
                     getSupportFragmentManager().beginTransaction().show(mCurrentFragment).commit();
                 } else {
+                    //不存在的，添加
                     getSupportFragmentManager().beginTransaction().add(R.id.main_fragment_container, mCurrentFragment).commit();
                 }
             }
@@ -205,9 +196,23 @@ public class MainActivity extends BaseActivity implements MainView, NavigationVi
 //                break;
         }
         mNavigationView.setCheckedItem(mCheckItem);
-        mFragmentArray = new SparseArray<>(FRAGMENT_NUM);
-        refreshCurrentFragment();
-        getSupportFragmentManager().beginTransaction().add(R.id.main_fragment_container, mCurrentFragment).commit();
+        //mFragmentArray = new SparseArray<>(FRAGMENT_NUM);
+        Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.main_fragment_container);
+        if(fragment != null) {
+             mCurrentFragment = (BaseFragment) fragment;
+             if(fragment instanceof ComicFragment) {
+                 mFragmentArray.put(R.id.drawer_comic, mCurrentFragment);
+             }
+
+             if(fragment instanceof  SourceFragment) {
+                 mFragmentArray.put(R.id.drawer_source, mCurrentFragment);
+             }
+
+        } else{
+            refreshCurrentFragment();
+            getSupportFragmentManager().beginTransaction().add(R.id.main_fragment_container, mCurrentFragment).commit();
+        }
+
     }
 
     private boolean refreshCurrentFragment() {
@@ -248,7 +253,7 @@ public class MainActivity extends BaseActivity implements MainView, NavigationVi
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
+        super.onSaveInstanceState(outState);//保存信息，整个可能引发重叠
     }
 
     @Override
