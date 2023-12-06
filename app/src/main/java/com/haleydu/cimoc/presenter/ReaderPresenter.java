@@ -2,6 +2,7 @@ package com.haleydu.cimoc.presenter;
 
 import android.net.Uri;
 import android.os.Build;
+import android.util.Log;
 
 import com.haleydu.cimoc.core.Download;
 import com.haleydu.cimoc.core.Local;
@@ -296,6 +297,11 @@ public class ReaderPresenter extends BasePresenter<ReaderView> {
             this.index = index;
             prev = index + 1;
             next = index - 1;
+
+            for(int i = 0;i < index;i++)
+            {
+                Log.d("Readerpresenter", String.format("章节名称 %s, 索引 %d", array[i].getTitle(), i));
+            }
         }
 
         Chapter getPrevChapter() {
@@ -305,6 +311,7 @@ public class ReaderPresenter extends BasePresenter<ReaderView> {
         Chapter getNextChapter() {
             if( next < 0)
                 return null;
+            Log.d("Readerpresenter", String.format("=========下一章是 %s=========", array[next].getTitle()));
             return array[next];
         }
         ////真正切换上一章

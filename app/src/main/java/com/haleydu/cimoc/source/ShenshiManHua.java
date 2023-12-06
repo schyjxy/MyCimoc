@@ -40,7 +40,7 @@ public class ShenshiManHua extends MangaParser {
 
     public static final int TYPE = 149;
     public static final String DEFAULT_TITLE = "绅士漫画";
-    public static final String host = "http://www.wn01.lol/";
+    public static final String host = "http://www.hm05.lol/";
 
     public ShenshiManHua(Source source) {
         init(source, new Category());
@@ -66,13 +66,20 @@ public class ShenshiManHua extends MangaParser {
         return new NodeIterator(body.list(".pic_box")) {
             @Override
             protected Comic parse(Node node) {
-                String cid = node.href("a");
-                cid = cid.substring(cid.lastIndexOf("-") + 1);
-                cid = cid.substring(0, cid.indexOf("."));
-                String title = node.attr("a", "title").replace("<em>", "");
-                title = title.replace("</em>","").trim();
-                String cover = String.format("http:%s", node.attr("a > img", "src"));
-                return new Comic(TYPE, cid, title, cover, null, null);
+                try {
+                    String cid = node.href("a");
+                    cid = cid.substring(cid.lastIndexOf("-") + 1);
+                    cid = cid.substring(0, cid.indexOf("."));
+                    String title = node.attr("a", "title").replace("<em>", "");
+                    title = title.replace("</em>","").trim();
+                    String cover = String.format("http:%s", node.attr("a > img", "src"));
+                    return new Comic(TYPE, cid, title, cover, null, null);
+                }
+                catch (Exception ex) {
+                    ex.printStackTrace();
+                }
+
+                return null;
             }
         };
     }

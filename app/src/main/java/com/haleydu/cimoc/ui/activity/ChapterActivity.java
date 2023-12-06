@@ -140,7 +140,7 @@ public class ChapterActivity extends BackActivity implements BaseAdapter.OnItemC
                 list.add(switcher.getElement());
             }
         }
-
+        //这里保存上次章节列表
         if (list.isEmpty()) {
             showSnackbar(R.string.chapter_download_empty);
         } else if (PermissionUtils.hasStoragePermission(this)) {

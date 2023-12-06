@@ -72,6 +72,7 @@ public abstract class GridFragment extends RecyclerViewFragment implements GridV
     protected RecyclerView.LayoutManager initLayoutManager() {
         float val = App.mWidthPixels / (App.mDensity * 140);
         int column = (int)Math.ceil(val);
+        column = column < 6? column:6;
         GridLayoutManager manager = new GridLayoutManager(getActivity(),  column);//这里设置列数
         manager.setRecycleChildrenOnDetach(true);
         return manager;

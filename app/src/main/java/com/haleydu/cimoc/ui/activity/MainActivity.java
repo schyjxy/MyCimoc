@@ -61,6 +61,10 @@ import com.haleydu.cimoc.utils.HttpUtils;
 import com.haleydu.cimoc.utils.PermissionUtils;
 
 import com.king.app.updater.constant.Constants;
+
+import java.util.LinkedList;
+import java.util.List;
+
 import butterknife.BindView;
 
 
@@ -104,6 +108,8 @@ public class MainActivity extends BaseActivity implements MainView, NavigationVi
     private Update update = new Update();
     private String versionName,content,mUrl,md5;
     private int versionCode;
+    private String comicTag = "ComicFragment";
+    private String sourceTag = "SourceFragment";
     //auth0
 //    private Auth0 auth0;
 
@@ -143,12 +149,33 @@ public class MainActivity extends BaseActivity implements MainView, NavigationVi
             @Override
             public void onDrawerClosed(View drawerView) { //关闭事件触发
                 super.onDrawerClosed(drawerView);
-                if (refreshCurrentFragment()) {
+
+                if (!refreshCurrentFragment()) {
+                    String tag = "";
+                    Fragment fragment = null;
+
+                    if(mCurrentFragment instanceof ComicFragment) {
+                        tag = comicTag;
+                    }
+
+                    if(mCurrentFragment instanceof SourceFragment) {
+                        tag = sourceTag;
+                    }
+
+                    fragment = getSupportFragmentManager().findFragmentByTag(tag);
+
+                    if(fragment == null) {
+                        getSupportFragmentManager().beginTransaction().add(R.id.main_fragment_container, mCurrentFragment, tag).commit();
+                    }else {
+                        mCurrentFragment = (BaseFragment)fragment;
+                        getSupportFragmentManager().beginTransaction().show(mCurrentFragment).commit();
+                    }
+
+                }else
+                {
                     getSupportFragmentManager().beginTransaction().show(mCurrentFragment).commit();
-                } else {
-                    //不存在的，添加
-                    getSupportFragmentManager().beginTransaction().add(R.id.main_fragment_container, mCurrentFragment).commit();
                 }
+
             }
         };
         mDrawerLayout.setDrawerListener(mDrawerToggle);
@@ -187,7 +214,6 @@ public class MainActivity extends BaseActivity implements MainView, NavigationVi
                 mCheckItem = R.id.drawer_comic;
                 break;
 
-
             case PreferenceManager.HOME_SOURCE:
                 mCheckItem = R.id.drawer_source;
                 break;
@@ -197,21 +223,37 @@ public class MainActivity extends BaseActivity implements MainView, NavigationVi
         }
         mNavigationView.setCheckedItem(mCheckItem);
         //mFragmentArray = new SparseArray<>(FRAGMENT_NUM);
-        Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.main_fragment_container);
-        if(fragment != null) {
-             mCurrentFragment = (BaseFragment) fragment;
-             if(fragment instanceof ComicFragment) {
-                 mFragmentArray.put(R.id.drawer_comic, mCurrentFragment);
-             }
+        List<String> list = new LinkedList<String>();
+        list.add(comicTag);
+        list.add(sourceTag);
 
-             if(fragment instanceof  SourceFragment) {
-                 mFragmentArray.put(R.id.drawer_source, mCurrentFragment);
-             }
+        for(String tag : list){
+            Fragment fragment = getSupportFragmentManager().findFragmentByTag(comicTag);
 
-        } else{
-            refreshCurrentFragment();
-            getSupportFragmentManager().beginTransaction().add(R.id.main_fragment_container, mCurrentFragment).commit();
+            if(fragment != null) {
+                if(fragment instanceof ComicFragment) {
+                    mFragmentArray.put(R.id.drawer_comic, (BaseFragment) fragment);
+                }
+
+                if(fragment instanceof  SourceFragment) {
+                    mFragmentArray.put(R.id.drawer_source, (BaseFragment) fragment);
+                }
+            }
         }
+
+        if(refreshCurrentFragment()) {
+            getSupportFragmentManager().beginTransaction().show(mCurrentFragment).commit();
+        }else {
+            String tag = "";
+            if(mCurrentFragment instanceof  ComicFragment) {
+                tag = comicTag;
+            }
+            if(mCurrentFragment instanceof  SourceFragment) {
+                tag = sourceTag;
+            }
+            getSupportFragmentManager().beginTransaction().add(R.id.main_fragment_container, mCurrentFragment, tag).commit();
+        }
+
 
     }
 
@@ -277,7 +319,17 @@ public class MainActivity extends BaseActivity implements MainView, NavigationVi
                 case R.id.drawer_source:
 //                case R.id.drawer_tag:
                     mCheckItem = itemId;
+                    if(mCurrentFragment instanceof  ComicFragment)
+                    {
+                        Log.d("MainActivity", "隐藏漫画栏");
+                    }
+                    if(mCurrentFragment instanceof  SourceFragment)
+                    {
+                        Log.d("MainActivity", "隐藏图源栏");
+                    }
+
                     getSupportFragmentManager().beginTransaction().hide(mCurrentFragment).commit();
+
                     if (mToolbar != null) {
                         mToolbar.setTitle(item.getTitle().toString());
                     }
